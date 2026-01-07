@@ -49,7 +49,7 @@ export default function Home(): JSX.Element {
       <section className="bg-white p-8 rounded shadow">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-4">Welcome to The Mind Arcade</h2>
+            <h2 className="text-2xl font-bold mb-4">Brain Development Games</h2>
             <p className="mb-4">Play a collection of ten cognitive games designed to improve memory, planning, and calculation.</p>
 
             <div className="flex gap-4">

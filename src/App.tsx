@@ -17,7 +17,7 @@ export default function App(): JSX.Element {
     <div className="min-h-screen flex flex-col">
       <header className="bg-indigo-600 text-white p-4">
         <nav className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold">The Mind Arcade</h1>
+          <h1 className="text-xl font-bold">Brain Development Games</h1>
           <div className="space-x-4">
             <Link to="/" className="underline">
               Home
@@ -43,7 +43,7 @@ export default function App(): JSX.Element {
       </main>
 
       <footer className="bg-slate-200 text-slate-700 p-4 text-center">
-        © The Mind Arcade — <a href="https://sojinantony01.github.io/brain-development-games" className="underline">Live demo</a>
+        © Brain Development Games — <a href="https://sojinantony01.github.io/brain-development-games" className="underline">Live demo</a>
       </footer>
     </div>
   )

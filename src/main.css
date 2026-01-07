@@ -1,11 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 html, body, #root {
   height: 100%;
 }
 
 body {
-  @apply bg-slate-50 text-slate-900;
+  background-color: rgb(248 250 252);
+  color: rgb(15 23 42);
 }
+
+/* Made with Bob */

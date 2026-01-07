@@ -6,7 +6,7 @@ import './main.css'
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/brain-development-games">
       <App />
     </BrowserRouter>
   </React.StrictMode>

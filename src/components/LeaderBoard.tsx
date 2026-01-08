@@ -165,21 +165,21 @@ export default function LeaderBoard(): JSX.Element {
 
     // Website link
     ctx.font = 'italic 20px Arial'
-    ctx.textAlign = 'center'
-    ctx.fillText('https://sojinantony01.github.io/brain-development-games/', canvas.width / 2, canvas.height - 140)
+    ctx.fillStyle = '#ffffff'
+    ctx.fillText('https://sojinantony01.github.io/brain-development-games/', canvas.width / 2, canvas.height - 160)
 
     // Creator credit
     ctx.font = 'italic 18px Arial'
-    ctx.fillText('By - Sojin Antony', canvas.width / 2, canvas.height - 105)
+    ctx.fillText('By - Sojin Antony', canvas.width / 2, canvas.height - 125)
 
     // Date
     ctx.font = '18px Arial'
-    ctx.fillText(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), canvas.width / 2, canvas.height - 85)
+    ctx.fillText(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), canvas.width / 2, canvas.height - 95)
     
     // Legal disclaimer
-    ctx.font = '12px Arial'
-    ctx.fillStyle = '#e0e0e0'
-    ctx.fillText('This certificate has no official or professional value and is for personal enjoyment only.', canvas.width / 2, canvas.height - 55)
+    ctx.font = '11px Arial'
+    ctx.fillStyle = '#d0d0d0'
+    ctx.fillText('This certificate has no official or professional value and is for personal enjoyment only.', canvas.width / 2, canvas.height - 65)
 
     // Download the certificate
     canvas.toBlob((blob) => {

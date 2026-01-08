@@ -32,6 +32,13 @@ export default function SchulteTable({ level }: SchulteProps): JSX.Element {
   const [time, setTime] = useState<number | null>(null)
   const saved = useRef(false)
 
+  useEffect(() => {
+    setNext(1)
+    setStartTime(null)
+    setTime(null)
+    saved.current = false
+  }, [level])
+
   function clickNumber(n: number): void {
     if (startTime === null) setStartTime(Date.now())
     if (n === next) {
@@ -59,7 +66,7 @@ export default function SchulteTable({ level }: SchulteProps): JSX.Element {
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={time !== null} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Schulte Table (Level {level})</h2>
       <p className="text-slate-600 mb-4">Find numbers from 1 to {total} as fast as you can.</p>

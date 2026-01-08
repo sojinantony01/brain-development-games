@@ -89,7 +89,7 @@ export default function TrailMaking({ level }: TrailMakingProps): JSX.Element {
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Trail Making (Level {level})</h2>
       <p className="text-slate-600 mb-4">Connect the nodes in order as fast as you can!</p>

@@ -34,6 +34,8 @@ export default function PatternMatrix({ level }: PatternMatrixProps): JSX.Elemen
     setPhase('show')
     setAttempt(new Set())
     setScore(0)
+    setCompleted(false)
+    saved.current = false
     const t = setTimeout(() => setPhase('recreate'), Math.max(800, 1200 - level * 80))
     return () => clearTimeout(t)
   }, [level, size, total])
@@ -59,7 +61,7 @@ export default function PatternMatrix({ level }: PatternMatrixProps): JSX.Elemen
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Pattern Matrix (Level {level})</h2>
       <p className="text-slate-600 mb-4">Observe the flashed squares and recreate the pattern.</p>

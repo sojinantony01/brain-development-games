@@ -43,6 +43,7 @@ export default function TowerOfHanoi({ level }: TowerProps): JSX.Element {
     setMoves(0)
     setWon(false)
     setHidden(false)
+    setResetCount(0)
     if (level === 10) {
       // blind mode: hide after 2s
       const t = setTimeout(() => setHidden(true), 2000)

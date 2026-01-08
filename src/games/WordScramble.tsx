@@ -31,6 +31,9 @@ export default function WordScramble({ level }: WordScrambleProps): JSX.Element 
   const target = Math.max(3, Math.ceil(level / 2))
 
   useEffect(() => {
+    setScore(0)
+    setCompleted(false)
+    saved.current = false
     pick()
   }, [level])
 
@@ -58,7 +61,7 @@ export default function WordScramble({ level }: WordScrambleProps): JSX.Element 
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Word Scramble (Level {level})</h2>
       <p className="text-slate-600 mb-4">Unscramble the letters to form a real word.</p>

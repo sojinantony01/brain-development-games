@@ -26,6 +26,8 @@ export default function NBack({ level }: NBackProps): JSX.Element {
     setIndex(0)
     setScore(0)
     setRunning(false)
+    setCompleted(false)
+    saved.current = false
     if (intervalRef.current) {
       window.clearInterval(intervalRef.current)
       intervalRef.current = null
@@ -79,7 +81,7 @@ export default function NBack({ level }: NBackProps): JSX.Element {
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">N-Back (Level {level})</h2>
       <p className="text-slate-600 mb-4">Current N: {level === 10 ? 'Dual N-Back' : n}</p>

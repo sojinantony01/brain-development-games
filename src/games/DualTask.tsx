@@ -108,7 +108,7 @@ export default function DualTask({ level }: DualTaskProps): JSX.Element {
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Dual Task Challenge (Level {level})</h2>
       <p className="text-slate-600 mb-4">Count target shapes AND solve math problems!</p>

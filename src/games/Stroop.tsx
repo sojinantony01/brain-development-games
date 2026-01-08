@@ -39,6 +39,13 @@ export default function Stroop({ level }: StroopProps): JSX.Element {
   const [completed, setCompleted] = useState(false)
   const target = Math.max(3, level * 2)
 
+  // Reset state when level changes
+  useEffect(() => {
+    setCompleted(false)
+    setScore(0)
+    saved.current = false
+  }, [level])
+
   function press(color: string): void {
     if (color.toLowerCase() === word.color) setScore((s) => s + 1)
     else setScore((s) => Math.max(0, s - 1))
@@ -61,7 +68,7 @@ export default function Stroop({ level }: StroopProps): JSX.Element {
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Stroop Test (Level {level})</h2>
       <div className="my-4 text-3xl font-bold" style={{ color: word.color }}>{word.text}</div>

@@ -74,7 +74,7 @@ export default function AnagramSolver({ level }: AnagramSolverProps): JSX.Elemen
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Anagram Solver (Level {level})</h2>
       <p className="text-slate-600 mb-4">Unscramble the letters to form words!</p>

@@ -36,6 +36,8 @@ export default function QuickMath({ level }: QuickMathProps): JSX.Element {
     setInput('')
     setScore(0)
     setTimeLeft(level >= 9 ? 2000 : null)
+    setCompleted(false)
+    saved.current = false
   }, [level])
 
   useEffect(() => {
@@ -63,7 +65,7 @@ export default function QuickMath({ level }: QuickMathProps): JSX.Element {
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Quick Math (Level {level})</h2>
       <p className="text-slate-600 mb-4">Solve quickly: {problem.text}</p>

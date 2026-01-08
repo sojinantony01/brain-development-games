@@ -108,7 +108,7 @@ export default function VisualSearch({ level }: VisualSearchProps): JSX.Element 
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Visual Search (Level {level})</h2>
       <p className="text-slate-600 mb-4">Find all targets as quickly as possible!</p>

@@ -76,7 +76,7 @@ export default function ReactionTime({ level }: ReactionTimeProps): JSX.Element 
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Reaction Time Test (Level {level})</h2>
       <p className="text-slate-600 mb-4">Click as fast as you can when the screen turns green!</p>

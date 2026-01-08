@@ -85,7 +85,7 @@ export default function WorkingMemoryGrid({ level }: WorkingMemoryGridProps): JS
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Working Memory Grid (Level {level})</h2>
       <p className="text-slate-600 mb-4">Remember the positions and recreate them!</p>

@@ -47,6 +47,7 @@ export default function MentalRotation({ level }: MentalRotationProps): JSX.Elem
     setPair(generatePair(level))
     setScore(0)
     setAttempts(0)
+    setCompleted(false)
     saved.current = false
   }, [level])
 
@@ -71,7 +72,7 @@ export default function MentalRotation({ level }: MentalRotationProps): JSX.Elem
 
   return (
     <>
-      <CelebrationAnimation show={won} />
+      <CelebrationAnimation show={completed} />
       <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Mental Rotation (Level {level})</h2>
       <p className="text-slate-600 mb-4">Decide if the right shape is the same as the left after rotation/mirroring.</p>

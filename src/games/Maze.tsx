@@ -49,6 +49,7 @@ export default function Maze({ level }: MazeProps): JSX.Element {
     setWon(false)
     setFog(level >= 7)
     setDynamic(level >= 9)
+    setResetCount(0)
   }, [initialGrid, start, level])
 
   useEffect(() => {

@@ -17,9 +17,10 @@ export default function Stroop({ level }: StroopProps): JSX.Element {
 
   useEffect(() => {
     // level-based modifications
-    if (level <= 1) setSpeed(2000)
-    else if (level <= 4) setSpeed(1500)
-    else if (level <= 6) setSpeed(1000)
+    if (level <= 1) setSpeed(3000)
+    else if (level <= 3) setSpeed(2000)
+    else if (level <= 5) setSpeed(1500)
+    else if (level <= 7) setSpeed(1000)
     else setSpeed(700)
 
     if (level >= 5 && level <= 5) setSwapButtons(true)

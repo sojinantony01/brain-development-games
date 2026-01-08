@@ -116,11 +116,15 @@ export default function LeaderBoard(): JSX.Element {
     ctx.fillStyle = '#ffffff'
     ctx.font = 'bold 60px Arial'
     ctx.textAlign = 'center'
-    ctx.fillText('Certificate of Achievement', canvas.width / 2, 150)
+    ctx.fillText('Certificate of Achievement', canvas.width / 2, 140)
 
     // Subtitle
     ctx.font = '30px Arial'
-    ctx.fillText('Brain Development Games', canvas.width / 2, 200)
+    ctx.fillText('Brain Development Games', canvas.width / 2, 190)
+    
+    // Disclaimer
+    ctx.font = 'italic 16px Arial'
+    ctx.fillText('(For Entertainment & Personal Use Only)', canvas.width / 2, 220)
 
     // Name section
     ctx.font = 'italic 24px Arial'
@@ -170,7 +174,12 @@ export default function LeaderBoard(): JSX.Element {
 
     // Date
     ctx.font = '18px Arial'
-    ctx.fillText(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), canvas.width / 2, canvas.height - 70)
+    ctx.fillText(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), canvas.width / 2, canvas.height - 85)
+    
+    // Legal disclaimer
+    ctx.font = '12px Arial'
+    ctx.fillStyle = '#e0e0e0'
+    ctx.fillText('This certificate has no official or professional value and is for personal enjoyment only.', canvas.width / 2, canvas.height - 55)
 
     // Download the certificate
     canvas.toBlob((blob) => {

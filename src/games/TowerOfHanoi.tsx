@@ -1,5 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import ShareButtons from '../components/ShareButtons'
+import NextLevelButton from '../components/NextLevelButton'
+import CelebrationAnimation from '../components/CelebrationAnimation'
+import ResetButton from '../components/ResetButton'
 export type TowerProps = {
   level: number
 }
@@ -31,6 +34,7 @@ export default function TowerOfHanoi({ level }: TowerProps): JSX.Element {
   const [selectedFrom, setSelectedFrom] = useState<number | null>(null)
   const [moves, setMoves] = useState<number>(0)
   const [won, setWon] = useState(false)
+  const [resetCount, setResetCount] = useState<number>(0)
   const [hidden, setHidden] = useState(false)
 
   useEffect(() => {
@@ -109,7 +113,9 @@ export default function TowerOfHanoi({ level }: TowerProps): JSX.Element {
   }
 
   return (
-    <div className="bg-white p-6 rounded shadow">
+    <>
+      <CelebrationAnimation show={won} />
+      <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Tower of Hanoi (Level {level})</h2>
       <p className="text-slate-600 mb-2">Disks: {diskCount} • Moves: {moves}</p>
 
@@ -135,7 +141,8 @@ export default function TowerOfHanoi({ level }: TowerProps): JSX.Element {
         {won ? (
           <div className="p-3 bg-emerald-100 text-emerald-800 rounded">
             ✅ Puzzle solved in {moves} moves!
-            <div className="mt-2">
+            <div className="mt-4 flex flex-col gap-2">
+              <NextLevelButton currentLevel={level} />
               <ShareButtons gameId="tower-of-hanoi" gameName="Tower of Hanoi" level={level} score={Math.max(0, 100 - moves)} />
             </div>
           </div>
@@ -144,5 +151,6 @@ export default function TowerOfHanoi({ level }: TowerProps): JSX.Element {
         )}
       </div>
     </div>
+    </>
   )
 }

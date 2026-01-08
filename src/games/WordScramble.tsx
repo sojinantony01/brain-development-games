@@ -1,5 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { markGameCompletedLevel } from '../lib/progress'
+import NextLevelButton from '../components/NextLevelButton'
+import CelebrationAnimation from '../components/CelebrationAnimation'
 
 export type WordScrambleProps = {
   level: number
@@ -24,6 +26,9 @@ export default function WordScramble({ level }: WordScrambleProps): JSX.Element 
   const [scr, setScr] = useState('')
   const [input, setInput] = useState('')
   const [score, setScore] = useState(0)
+  const [completed, setCompleted] = useState(false)
+  const saved = useRef(false)
+  const target = Math.max(3, Math.ceil(level / 2))
 
   useEffect(() => {
     pick()
@@ -38,9 +43,12 @@ export default function WordScramble({ level }: WordScrambleProps): JSX.Element 
 
   function submitGuess(): void {
     if (input.toLowerCase() === word.toLowerCase()) {
+      const newScore = score + 1
       setScore((s) => s + 1)
-      if (score + 1 >= Math.max(3, Math.ceil(level / 2))) {
-        markGameCompletedLevel('word-scramble', level, score + 1)
+      if (!saved.current && newScore >= target) {
+        markGameCompletedLevel('word-scramble', level, newScore)
+        saved.current = true
+        setCompleted(true)
       }
       pick()
     } else {
@@ -49,7 +57,9 @@ export default function WordScramble({ level }: WordScrambleProps): JSX.Element 
   }
 
   return (
-    <div className="bg-white p-6 rounded shadow">
+    <>
+      <CelebrationAnimation show={won} />
+      <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Word Scramble (Level {level})</h2>
       <p className="text-slate-600 mb-4">Unscramble the letters to form a real word.</p>
 
@@ -59,7 +69,17 @@ export default function WordScramble({ level }: WordScrambleProps): JSX.Element 
         <button onClick={submitGuess} className="px-3 py-1 bg-indigo-600 text-white rounded">Submit</button>
       </div>
 
-      <div className="mt-4 text-sm text-slate-500">Score: {score}</div>
+      <div className="mt-4 text-sm text-slate-500">Score: {score} / {target}</div>
+      
+      {completed && (
+        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
+          ✅ Level {level} completed!
+          <div className="mt-2">
+            <NextLevelButton currentLevel={level} />
+          </div>
+        </div>
+      )}
     </div>
+    </>
   )
 }

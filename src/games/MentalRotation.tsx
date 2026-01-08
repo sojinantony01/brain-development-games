@@ -1,4 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
+import NextLevelButton from '../components/NextLevelButton'
+import CelebrationAnimation from '../components/CelebrationAnimation'
 
 export type MentalRotationProps = {
   level: number
@@ -37,6 +39,8 @@ export default function MentalRotation({ level }: MentalRotationProps): JSX.Elem
   const [score, setScore] = useState(0)
   const [attempts, setAttempts] = useState(0)
   const saved = useRef(false)
+  const [completed, setCompleted] = useState(false)
+  const target = Math.max(3, Math.ceil(level * 1.5))
 
   useEffect(() => {
     // regenerate when level changes
@@ -52,20 +56,23 @@ export default function MentalRotation({ level }: MentalRotationProps): JSX.Elem
 
   function answer(isSame: boolean): void {
     setAttempts((a) => a + 1)
+    const newScore = score + (isSame === pair.same ? 1 : 0)
     if (isSame === pair.same) setScore((s) => s + 1)
     // simple rule: persist when score reaches threshold
-    const target = Math.max(3, Math.ceil(level * 1.5))
-    if (!saved.current && score + (isSame === pair.same ? 1 : 0) >= target) {
+    if (!saved.current && newScore >= target) {
       import('../lib/progress').then(({ markGameCompletedLevel }) => {
-        markGameCompletedLevel('mental-rotation', level, score + (isSame === pair.same ? 1 : 0))
+        markGameCompletedLevel('mental-rotation', level, newScore)
       })
       saved.current = true
+      setCompleted(true)
     }
     respawn()
   }
 
   return (
-    <div className="bg-white p-6 rounded shadow">
+    <>
+      <CelebrationAnimation show={won} />
+      <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Mental Rotation (Level {level})</h2>
       <p className="text-slate-600 mb-4">Decide if the right shape is the same as the left after rotation/mirroring.</p>
 
@@ -80,7 +87,17 @@ export default function MentalRotation({ level }: MentalRotationProps): JSX.Elem
         <button onClick={() => answer(false)} className="px-4 py-2 bg-red-500 text-white rounded">Mirror/Different</button>
       </div>
 
-      <div className="mt-4 text-sm text-slate-500">Score: {score} • Attempts: {attempts}</div>
+      <div className="mt-4 text-sm text-slate-500">Score: {score} / {target} • Attempts: {attempts}</div>
+      
+      {completed && (
+        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
+          ✅ Level {level} completed!
+          <div className="mt-2">
+            <NextLevelButton currentLevel={level} />
+          </div>
+        </div>
+      )}
     </div>
+    </>
   )
 }

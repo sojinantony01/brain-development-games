@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { markGameCompletedLevel } from '../lib/progress'
+import NextLevelButton from '../components/NextLevelButton'
+import CelebrationAnimation from '../components/CelebrationAnimation'
 
 export type NBackProps = {
   level: number
@@ -64,16 +66,21 @@ export default function NBack({ level }: NBackProps): JSX.Element {
 
   // persist progress when reaching a target score (simple rule)
   const saved = useRef(false)
+  const [completed, setCompleted] = useState(false)
+  const target = Math.max(3, level * 2)
+  
   useEffect(() => {
-    const target = Math.max(3, level * 2)
     if (!saved.current && score >= target) {
       markGameCompletedLevel('n-back', level, score)
       saved.current = true
+      setCompleted(true)
     }
-  }, [score, level])
+  }, [score, level, target])
 
   return (
-    <div className="bg-white p-6 rounded shadow">
+    <>
+      <CelebrationAnimation show={won} />
+      <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">N-Back (Level {level})</h2>
       <p className="text-slate-600 mb-4">Current N: {level === 10 ? 'Dual N-Back' : n}</p>
 
@@ -89,6 +96,16 @@ export default function NBack({ level }: NBackProps): JSX.Element {
       </div>
 
       <div className="mt-4 text-sm text-slate-500">Press Match when the current item matches the one shown N steps ago.</div>
+      
+      {completed && (
+        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
+          ✅ Level {level} completed! Target score: {target}
+          <div className="mt-2">
+            <NextLevelButton currentLevel={level} />
+          </div>
+        </div>
+      )}
     </div>
+    </>
   )
 }

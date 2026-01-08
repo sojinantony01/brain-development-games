@@ -1,5 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { markGameCompletedLevel } from '../lib/progress'
+import NextLevelButton from '../components/NextLevelButton'
+import CelebrationAnimation from '../components/CelebrationAnimation'
 
 export type PatternMatrixProps = {
   level: number
@@ -19,6 +21,9 @@ export default function PatternMatrix({ level }: PatternMatrixProps): JSX.Elemen
   const [attempt, setAttempt] = useState<Set<number>>(new Set())
   const [phase, setPhase] = useState<'show' | 'recreate' | 'done'>('show')
   const [score, setScore] = useState(0)
+  const [completed, setCompleted] = useState(false)
+  const saved = useRef(false)
+  const target = Math.max(3, Math.ceil(level / 2))
 
   useEffect(() => {
     // choose k squares to flash
@@ -41,16 +46,21 @@ export default function PatternMatrix({ level }: PatternMatrixProps): JSX.Elemen
   function submit(): void {
     const match = pattern.length === attempt.size && pattern.every((p) => attempt.has(p))
     if (match) {
+      const newScore = score + 1
       setScore((s) => s + 1)
-      if (score + 1 >= Math.max(3, Math.ceil(level / 2))) {
-        markGameCompletedLevel('pattern-matrix', level, score + 1)
+      if (!saved.current && newScore >= target) {
+        markGameCompletedLevel('pattern-matrix', level, newScore)
+        saved.current = true
+        setCompleted(true)
       }
     }
     setPhase('done')
   }
 
   return (
-    <div className="bg-white p-6 rounded shadow">
+    <>
+      <CelebrationAnimation show={won} />
+      <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Pattern Matrix (Level {level})</h2>
       <p className="text-slate-600 mb-4">Observe the flashed squares and recreate the pattern.</p>
 
@@ -73,7 +83,17 @@ export default function PatternMatrix({ level }: PatternMatrixProps): JSX.Elemen
         <button onClick={submit} className="px-3 py-1 bg-indigo-600 text-white rounded">Submit</button>
       </div>
 
-      <div className="mt-4 text-sm text-slate-500">Score: {score}</div>
+      <div className="mt-4 text-sm text-slate-500">Score: {score} / {target}</div>
+      
+      {completed && (
+        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
+          ✅ Level {level} completed!
+          <div className="mt-2">
+            <NextLevelButton currentLevel={level} />
+          </div>
+        </div>
+      )}
     </div>
+    </>
   )
 }

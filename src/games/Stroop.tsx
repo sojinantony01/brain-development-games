@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { markGameCompletedLevel } from '../lib/progress'
+import NextLevelButton from '../components/NextLevelButton'
+import CelebrationAnimation from '../components/CelebrationAnimation'
 
 export type StroopProps = {
   level: number
@@ -34,6 +36,8 @@ export default function Stroop({ level }: StroopProps): JSX.Element {
   }, [speed])
 
   const saved = useRef(false)
+  const [completed, setCompleted] = useState(false)
+  const target = Math.max(3, level * 2)
 
   function press(color: string): void {
     if (color.toLowerCase() === word.color) setScore((s) => s + 1)
@@ -48,15 +52,17 @@ export default function Stroop({ level }: StroopProps): JSX.Element {
   }
 
   useEffect(() => {
-    const target = Math.max(3, level * 2)
     if (!saved.current && score >= target) {
       markGameCompletedLevel('stroop', level, score)
       saved.current = true
+      setCompleted(true)
     }
-  }, [score, level])
+  }, [score, level, target])
 
   return (
-    <div className="bg-white p-6 rounded shadow">
+    <>
+      <CelebrationAnimation show={won} />
+      <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Stroop Test (Level {level})</h2>
       <div className="my-4 text-3xl font-bold" style={{ color: word.color }}>{word.text}</div>
       <div className="flex gap-2">
@@ -64,7 +70,17 @@ export default function Stroop({ level }: StroopProps): JSX.Element {
           <button key={c} onClick={() => press(c)} className="px-3 py-1 bg-indigo-600 text-white rounded">{c}</button>
         ))}
       </div>
-      <div className="mt-4 text-sm">Score: {score}</div>
+      <div className="mt-4 text-sm">Score: {score} / {target}</div>
+      
+      {completed && (
+        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
+          ✅ Level {level} completed!
+          <div className="mt-2">
+            <NextLevelButton currentLevel={level} />
+          </div>
+        </div>
+      )}
     </div>
+    </>
   )
 }

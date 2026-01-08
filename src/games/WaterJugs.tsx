@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import ShareButtons from '../components/ShareButtons'
+import NextLevelButton from '../components/NextLevelButton'
+import ResetButton from '../components/ResetButton'
+import CelebrationAnimation from '../components/CelebrationAnimation'
 export type WaterJugsProps = {
   level: number
 }
@@ -11,17 +14,30 @@ export type JugConfig = {
 }
 
 export function configForLevel(level: number): JugConfig {
-  if (level <= 3) {
-    return { capacities: [3, 5], target: 4 }
+  switch (level) {
+    case 1:
+      return { capacities: [3, 5], target: 4 }
+    case 2:
+      return { capacities: [5, 7], target: 6 }
+    case 3:
+      return { capacities: [3, 7], target: 5 }
+    case 4:
+      return { capacities: [5, 11], target: 7 }
+    case 5:
+      return { capacities: [7, 13], target: 5 }
+    case 6:
+      return { capacities: [3, 5, 8], target: 4 }
+    case 7:
+      return { capacities: [5, 7, 11], target: 9 }
+    case 8:
+      return { capacities: [3, 7, 10], target: 5 }
+    case 9:
+      return { capacities: [4, 9, 13], target: 6 }
+    case 10:
+      return { capacities: [5, 8, 13], target: 11, timerSeconds: 90 }
+    default:
+      return { capacities: [3, 5], target: 4 }
   }
-  if (level <= 6) {
-    return { capacities: [7, 13], target: 5 }
-  }
-  if (level <= 9) {
-    return { capacities: [3, 5, 8], target: 4 }
-  }
-  // level 10
-  return { capacities: [3, 5, 8], target: 4, timerSeconds: 60 }
 }
 
 export default function WaterJugs({ level }: WaterJugsProps): JSX.Element {
@@ -30,12 +46,23 @@ export default function WaterJugs({ level }: WaterJugsProps): JSX.Element {
   const [moves, setMoves] = useState<string[]>([])
   const [timeLeft, setTimeLeft] = useState<number | null>(cfg.timerSeconds ?? null)
   const [won, setWon] = useState<boolean>(false)
+  const [resetCount, setResetCount] = useState<number>(0)
+
+  const resetGame = () => {
+    setJugs(cfg.capacities.map(() => 0))
+    setMoves([])
+    setWon(false)
+    setTimeLeft(cfg.timerSeconds ?? null)
+    setResetCount(prev => prev + 1)
+    saved.current = false
+  }
 
   useEffect(() => {
     setJugs(cfg.capacities.map(() => 0))
     setMoves([])
     setWon(false)
     setTimeLeft(cfg.timerSeconds ?? null)
+    setResetCount(0)
   }, [cfg])
 
   useEffect(() => {
@@ -96,9 +123,16 @@ export default function WaterJugs({ level }: WaterJugsProps): JSX.Element {
   const isTimeUp = timeLeft !== null && timeLeft <= 0
 
   return (
-    <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Water Jugs (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Target: <strong>{cfg.target}L</strong></p>
+    <>
+      <CelebrationAnimation show={won} />
+      <div className="bg-white p-6 rounded shadow">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h2 className="text-xl font-bold">Water Jugs (Level {level})</h2>
+            <p className="text-slate-600">Target: <strong>{cfg.target}L</strong></p>
+          </div>
+          {!won && <ResetButton onReset={resetGame} resetCount={resetCount} />}
+        </div>
 
       {cfg.timerSeconds && (
         <div className="mb-4">Time: <strong>{timeLeft ?? cfg.timerSeconds}</strong> seconds</div>
@@ -149,13 +183,15 @@ export default function WaterJugs({ level }: WaterJugsProps): JSX.Element {
       {won ? (
         <div className="p-4 bg-emerald-100 text-emerald-800 rounded">
           ✅ You achieved the target!
-          <div className="mt-2">
+          <div className="mt-4 flex flex-col gap-2">
+            <NextLevelButton currentLevel={level} />
             <ShareButtons gameId="water-jugs" gameName="Water Jugs" level={level} score={Math.max(0, 100 - moves.length)} />
           </div>
         </div>
       ) : isTimeUp ? (
         <div className="p-4 bg-red-100 text-red-800 rounded">⏱ Time's up!</div>
       ) : null}
-    </div>
+      </div>
+    </>
   )
 }

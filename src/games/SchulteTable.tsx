@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { markGameCompletedLevel } from '../lib/progress'
+import NextLevelButton from '../components/NextLevelButton'
+import CelebrationAnimation from '../components/CelebrationAnimation'
 
 export type SchulteProps = {
   level: number
@@ -56,7 +58,9 @@ export default function SchulteTable({ level }: SchulteProps): JSX.Element {
   }
 
   return (
-    <div className="bg-white p-6 rounded shadow">
+    <>
+      <CelebrationAnimation show={won} />
+      <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Schulte Table (Level {level})</h2>
       <p className="text-slate-600 mb-4">Find numbers from 1 to {total} as fast as you can.</p>
 
@@ -80,6 +84,16 @@ export default function SchulteTable({ level }: SchulteProps): JSX.Element {
         {time !== null && <div className="text-sm text-slate-700">Time: {(time / 1000).toFixed(2)}s</div>}
         <button onClick={reset} className="ml-auto px-3 py-1 bg-yellow-400 rounded">Reset</button>
       </div>
+      
+      {time !== null && (
+        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
+          ✅ Completed in {(time / 1000).toFixed(2)}s!
+          <div className="mt-2">
+            <NextLevelButton currentLevel={level} />
+          </div>
+        </div>
+      )}
     </div>
+    </>
   )
 }

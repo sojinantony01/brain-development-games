@@ -1,5 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { markGameCompletedLevel } from '../lib/progress'
+import NextLevelButton from '../components/NextLevelButton'
+import CelebrationAnimation from '../components/CelebrationAnimation'
+import ResetButton from '../components/ResetButton'
+import ShareButtons from '../components/ShareButtons'
 
 export type MazeProps = {
   level: number
@@ -34,6 +38,7 @@ export default function Maze({ level }: MazeProps): JSX.Element {
   const [pos, setPos] = useState<[number, number]>(start)
   const [moves, setMoves] = useState(0)
   const [won, setWon] = useState(false)
+  const [resetCount, setResetCount] = useState<number>(0)
   const [fog, setFog] = useState(level >= 7)
   const [dynamic, setDynamic] = useState(level >= 9)
 
@@ -81,7 +86,9 @@ export default function Maze({ level }: MazeProps): JSX.Element {
   }
 
   return (
-    <div className="bg-white p-6 rounded shadow">
+    <>
+      <CelebrationAnimation show={won} />
+      <div className="bg-white p-6 rounded shadow">
       <h2 className="text-xl font-bold">Pathway / Maze (Level {level})</h2>
       <div className="my-4 grid gap-1" style={{ gridTemplateColumns: `repeat(${grid[0].length}, 28px)` }}>
         {grid.map((row, y) =>
@@ -113,12 +120,17 @@ export default function Maze({ level }: MazeProps): JSX.Element {
         <button onClick={() => move(0, 1)} className="px-3 py-1 bg-indigo-600 text-white rounded">Down</button>
       </div>
 
-      <div className="mt-4 text-sm text-slate-500">Moves: {moves} {won ? '• Completed!' : ''}</div>
+      <div className="mt-4 text-sm text-slate-500">Moves: {moves}</div>
       {won && (
-        <div className="mt-2">
-          <ShareButtons gameId="maze" gameName="Pathway / Maze" level={level} score={Math.max(0, 100 - moves)} />
+        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
+          ✅ Maze completed in {moves} moves!
+          <div className="mt-4 flex flex-col gap-2">
+            <NextLevelButton currentLevel={level} />
+            <ShareButtons gameId="maze" gameName="Pathway / Maze" level={level} score={Math.max(0, 100 - moves)} />
+          </div>
         </div>
       )}
     </div>
+    </>
   )
 }

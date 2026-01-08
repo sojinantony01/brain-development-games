@@ -71,7 +71,7 @@ export default function WorkingMemoryGrid({ level }: WorkingMemoryGridProps): JS
       setScore(newScore)
       
       if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('working-memory-grid', level, newScore)
+        markGameCompletedLevel('working-memory-grid', level, newScore, target)
         saved.current = true
         setCompleted(true)
       }

@@ -3,6 +3,7 @@ export type LeaderboardEntry = {
   gameId: string
   level: number
   score: number
+  maxScore?: number
   when: string
 }
 
@@ -35,9 +36,13 @@ export function getLeaderboard(limit = 10): LeaderboardEntry[] {
 
 export function addLeaderboardEntry(entry: Omit<LeaderboardEntry, 'id' | 'when'>): void {
   const all = load()
+  
+  // Remove any existing entries for the same game and level (keep only the latest)
+  const filtered = all.filter(e => !(e.gameId === entry.gameId && e.level === entry.level))
+  
   const e: LeaderboardEntry = { ...entry, id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`, when: new Date().toISOString() }
-  all.push(e)
-  save(all)
+  filtered.push(e)
+  save(filtered)
 }
 
 export function resetLeaderboard(): void {

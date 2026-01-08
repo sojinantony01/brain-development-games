@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import ShareButtons from '../components/ShareButtons'
 import NextLevelButton from '../components/NextLevelButton'
 import ResetButton from '../components/ResetButton'
 import CelebrationAnimation from '../components/CelebrationAnimation'
@@ -85,7 +84,7 @@ export default function WaterJugs({ level }: WaterJugsProps): JSX.Element {
       const movesCount = moves.length
       const score = Math.max(0, 100 - movesCount)
       import('../lib/progress').then(({ markGameCompletedLevel }) => {
-        markGameCompletedLevel('water-jugs', level, score)
+        markGameCompletedLevel('water-jugs', level, score, 100)
       })
       saved.current = true
     }
@@ -185,7 +184,6 @@ export default function WaterJugs({ level }: WaterJugsProps): JSX.Element {
           ✅ You achieved the target!
           <div className="mt-4 flex flex-col gap-2">
             <NextLevelButton currentLevel={level} />
-            <ShareButtons gameId="water-jugs" gameName="Water Jugs" level={level} score={Math.max(0, 100 - moves.length)} />
           </div>
         </div>
       ) : isTimeUp ? (

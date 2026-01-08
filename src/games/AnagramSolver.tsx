@@ -61,7 +61,7 @@ export default function AnagramSolver({ level }: AnagramSolverProps): JSX.Elemen
       setScore(newScore)
       
       if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('anagram-solver', level, newScore)
+        markGameCompletedLevel('anagram-solver', level, newScore, target)
         saved.current = true
         setCompleted(true)
       }

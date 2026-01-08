@@ -87,7 +87,7 @@ export default function DualTask({ level }: DualTaskProps): JSX.Element {
       setScore(newScore)
       
       if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('dual-task', level, newScore)
+        markGameCompletedLevel('dual-task', level, newScore, target)
         saved.current = true
         setCompleted(true)
         stopGame()

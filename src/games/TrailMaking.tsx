@@ -78,7 +78,7 @@ export default function TrailMaking({ level }: TrailMakingProps): JSX.Element {
       const score = Math.max(0, Math.round(100000 / time))
       
       if (!saved.current) {
-        markGameCompletedLevel('trail-making', level, score)
+        markGameCompletedLevel('trail-making', level, score, 100)
         saved.current = true
         setCompleted(true)
       }

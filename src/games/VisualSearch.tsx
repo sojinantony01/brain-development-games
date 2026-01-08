@@ -89,7 +89,7 @@ export default function VisualSearch({ level }: VisualSearchProps): JSX.Element 
         setScore(newScore)
         
         if (!saved.current && newScore >= target) {
-          markGameCompletedLevel('visual-search', level, Math.round(10000 / time))
+          markGameCompletedLevel('visual-search', level, Math.round(10000 / time), target)
           saved.current = true
           setCompleted(true)
         }

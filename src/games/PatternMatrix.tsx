@@ -51,7 +51,7 @@ export default function PatternMatrix({ level }: PatternMatrixProps): JSX.Elemen
       const newScore = score + 1
       setScore((s) => s + 1)
       if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('pattern-matrix', level, newScore)
+        markGameCompletedLevel('pattern-matrix', level, newScore, target)
         saved.current = true
         setCompleted(true)
       }

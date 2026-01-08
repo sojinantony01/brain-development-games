@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useEffect } from 'react'
-import ShareButtons from '../components/ShareButtons'
 import NextLevelButton from '../components/NextLevelButton'
 import CelebrationAnimation from '../components/CelebrationAnimation'
 import ResetButton from '../components/ResetButton'
@@ -95,7 +94,7 @@ export default function TowerOfHanoi({ level }: TowerProps): JSX.Element {
       setWon(true)
       // persist progress and add leaderboard entry (score = 100 - moves)
       import('../lib/progress').then(({ markGameCompletedLevel }) => {
-        markGameCompletedLevel('tower-of-hanoi', level, Math.max(0, 100 - moves))
+        markGameCompletedLevel('tower-of-hanoi', level, Math.max(0, 100 - moves), 100)
       })
     }
   }, [rods, diskCount, level])
@@ -144,7 +143,6 @@ export default function TowerOfHanoi({ level }: TowerProps): JSX.Element {
             ✅ Puzzle solved in {moves} moves!
             <div className="mt-4 flex flex-col gap-2">
               <NextLevelButton currentLevel={level} />
-              <ShareButtons gameId="tower-of-hanoi" gameName="Tower of Hanoi" level={level} score={Math.max(0, 100 - moves)} />
             </div>
           </div>
         ) : (

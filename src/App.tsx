@@ -63,6 +63,7 @@ export default function App(): JSX.Element {
 
       <footer className="bg-slate-200 text-slate-700 p-4 text-center">
         © Brain Development Games — <a href="https://sojinantony01.github.io/brain-development-games" className="underline">Live demo</a>
+        <div className="text-sm mt-1">By - Sojin Antony</div>
       </footer>
     </div>
   )

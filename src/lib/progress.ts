@@ -40,7 +40,7 @@ export function getGameProgress(gameId: string): GameProgress | undefined {
 
 import { addLeaderboardEntry } from './leaderboard'
 
-export function markGameCompletedLevel(gameId: string, level: number, score?: number): void {
+export function markGameCompletedLevel(gameId: string, level: number, score?: number, maxScore?: number): void {
   const s = loadState()
   const prev = s[gameId] ?? { bestLevel: 0, completedLevels: [] }
   const bestLevel = Math.max(prev.bestLevel, level)
@@ -52,7 +52,7 @@ export function markGameCompletedLevel(gameId: string, level: number, score?: nu
   // add to leaderboard if score provided
   if (score !== undefined) {
     try {
-      addLeaderboardEntry({ gameId, level, score })
+      addLeaderboardEntry({ gameId, level, score, maxScore })
     } catch (e) {
       console.error('Could not add leaderboard entry', e)
     }

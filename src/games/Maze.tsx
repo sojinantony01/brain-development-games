@@ -3,7 +3,6 @@ import { markGameCompletedLevel } from '../lib/progress'
 import NextLevelButton from '../components/NextLevelButton'
 import CelebrationAnimation from '../components/CelebrationAnimation'
 import ResetButton from '../components/ResetButton'
-import ShareButtons from '../components/ShareButtons'
 
 export type MazeProps = {
   level: number
@@ -82,7 +81,7 @@ export default function Maze({ level }: MazeProps): JSX.Element {
     setMoves((m) => m + 1)
     if (nx === end[0] && ny === end[1]) {
       setWon(true)
-      markGameCompletedLevel('maze', level, Math.max(0, 100 - moves))
+      markGameCompletedLevel('maze', level, Math.max(0, 100 - moves), 100)
     }
   }
 
@@ -127,7 +126,6 @@ export default function Maze({ level }: MazeProps): JSX.Element {
           ✅ Maze completed in {moves} moves!
           <div className="mt-4 flex flex-col gap-2">
             <NextLevelButton currentLevel={level} />
-            <ShareButtons gameId="maze" gameName="Pathway / Maze" level={level} score={Math.max(0, 100 - moves)} />
           </div>
         </div>
       )}

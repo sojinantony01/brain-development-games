@@ -54,7 +54,7 @@ export default function QuickMath({ level }: QuickMathProps): JSX.Element {
     else setScore((s) => Math.max(0, s - 1))
     // progress rule
     if (!saved.current && newScore >= target) {
-      markGameCompletedLevel('quick-math', level, newScore)
+      markGameCompletedLevel('quick-math', level, newScore, target)
       saved.current = true
       setCompleted(true)
     }

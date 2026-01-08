@@ -62,7 +62,7 @@ export default function MentalRotation({ level }: MentalRotationProps): JSX.Elem
     // simple rule: persist when score reaches threshold
     if (!saved.current && newScore >= target) {
       import('../lib/progress').then(({ markGameCompletedLevel }) => {
-        markGameCompletedLevel('mental-rotation', level, newScore)
+        markGameCompletedLevel('mental-rotation', level, newScore, target)
       })
       saved.current = true
       setCompleted(true)

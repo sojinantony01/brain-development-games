@@ -49,7 +49,7 @@ export default function WordScramble({ level }: WordScrambleProps): JSX.Element 
       const newScore = score + 1
       setScore((s) => s + 1)
       if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('word-scramble', level, newScore)
+        markGameCompletedLevel('word-scramble', level, newScore, target)
         saved.current = true
         setCompleted(true)
       }

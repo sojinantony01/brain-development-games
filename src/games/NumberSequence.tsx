@@ -70,7 +70,7 @@ export default function NumberSequence({ level }: NumberSequenceProps): JSX.Elem
       setFeedback('✅ Correct!')
       
       if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('number-sequence', level, newScore)
+        markGameCompletedLevel('number-sequence', level, newScore, target)
         saved.current = true
         setCompleted(true)
       }

@@ -61,7 +61,7 @@ export default function Stroop({ level }: StroopProps): JSX.Element {
 
   useEffect(() => {
     if (!saved.current && score >= target) {
-      markGameCompletedLevel('stroop', level, score)
+      markGameCompletedLevel('stroop', level, score, target)
       saved.current = true
       setCompleted(true)
     }

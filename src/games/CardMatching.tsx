@@ -93,7 +93,7 @@ export default function CardMatching({ level }: CardMatchingProps): JSX.Element 
             setEndTime(time)
             const score = Math.max(0, Math.round(100000 / (time + moves * 1000)))
             if (!saved.current) {
-              markGameCompletedLevel('card-matching', level, score)
+              markGameCompletedLevel('card-matching', level, score, 100)
               saved.current = true
               setCompleted(true)
             }

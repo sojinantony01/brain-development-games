@@ -73,7 +73,7 @@ export default function NBack({ level }: NBackProps): JSX.Element {
   
   useEffect(() => {
     if (!saved.current && score >= target) {
-      markGameCompletedLevel('n-back', level, score)
+      markGameCompletedLevel('n-back', level, score, target)
       saved.current = true
       setCompleted(true)
     }

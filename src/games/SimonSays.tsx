@@ -96,7 +96,7 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
       setPlayerSequence([])
       
       if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('simon-says', level, newScore)
+        markGameCompletedLevel('simon-says', level, newScore, target)
         saved.current = true
         setCompleted(true)
       }

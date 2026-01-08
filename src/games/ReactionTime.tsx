@@ -42,6 +42,11 @@ export default function ReactionTime({ level }: ReactionTimeProps): JSX.Element 
   }
 
   function handleClick(): void {
+    if (phase === 'ready') {
+      startTest()
+      return
+    }
+
     if (phase === 'wait') {
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
       setPhase('result')
@@ -62,7 +67,7 @@ export default function ReactionTime({ level }: ReactionTimeProps): JSX.Element 
         const avg = newAttempts.reduce((a, b) => a + b, 0) / newAttempts.length
         if (!saved.current && avg <= avgThreshold) {
           const score = Math.round(1000 / avg * 100)
-          markGameCompletedLevel('reaction-time', level, score)
+          markGameCompletedLevel('reaction-time', level, score, 100)
           saved.current = true
           setCompleted(true)
         }

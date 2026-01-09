@@ -21,6 +21,23 @@ export const GAME_INSTRUCTIONS: Record<string, GameInstructions> = {
       'The solution often involves filling and pouring multiple times'
     ]
   },
+  'ball-sort': {
+    title: 'Ball Sort Puzzle',
+    instructions: [
+      'Sort colored balls into tubes so each tube contains only one color',
+      'Click on a tube to select it, then click another tube to move the top ball',
+      'You can only move a ball onto an empty tube or onto a ball of the same color',
+      'Each tube has a maximum capacity - you cannot overfill tubes',
+      'Use the empty tubes strategically to rearrange the balls',
+      'Complete the puzzle in fewer moves to score higher'
+    ],
+    tips: [
+      'Plan your moves ahead - think about which colors to isolate first',
+      'Use empty tubes as temporary storage',
+      'Try to complete one color at a time',
+      'If you get stuck, use the Reset button to start over'
+    ]
+  },
   'tower-of-hanoi': {
     title: 'Tower of Hanoi',
     instructions: [

@@ -4,6 +4,7 @@ import { getLeaderboard, resetLeaderboard, LeaderboardEntry } from '../lib/leade
 const GAME_NAMES: Record<string, string> = {
   'water-jugs': 'Water Jugs',
   'tower-of-hanoi': 'Tower of Hanoi',
+  'ball-sort': 'Ball Sort Puzzle',
   'n-back': 'N-Back',
   'stroop': 'Stroop Test',
   'mental-rotation': 'Mental Rotation',

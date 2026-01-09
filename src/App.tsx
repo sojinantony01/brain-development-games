@@ -3,6 +3,7 @@ import { Routes, Route, Link, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import WaterJugsPage from './pages/games/WaterJugsPage'
 import TowerOfHanoiPage from './pages/games/TowerOfHanoiPage'
+import BallSortPage from './pages/games/BallSortPage'
 import NBackPage from './pages/games/NBackPage'
 import StroopPage from './pages/games/StroopPage'
 import MentalRotationPage from './pages/games/MentalRotationPage'
@@ -40,6 +41,7 @@ export default function App(): JSX.Element {
           <Route path="/" element={<Home />} />
           <Route path="/games/water-jugs" element={<WaterJugsPage />} />
           <Route path="/games/tower-of-hanoi" element={<TowerOfHanoiPage />} />
+          <Route path="/games/ball-sort" element={<BallSortPage />} />
           <Route path="/games/n-back" element={<NBackPage />} />
           <Route path="/games/stroop" element={<StroopPage />} />
           <Route path="/games/mental-rotation" element={<MentalRotationPage />} />

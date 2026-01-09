@@ -11,6 +11,7 @@ export type GameMeta = {
 const GAMES: GameMeta[] = [
   { id: 'water-jugs', name: 'Water Jugs', description: 'Solve logic puzzles by measuring exact amounts using different sized jugs. Improves problem-solving and planning skills.' },
   { id: 'tower-of-hanoi', name: 'Tower of Hanoi', description: 'Move disks between pegs following specific rules. Classic recursive thinking and strategic planning exercise.' },
+  { id: 'ball-sort', name: 'Ball Sort Puzzle', description: 'Sort colored balls into tubes so each tube contains only one color. Develops logical thinking and planning skills.' },
   { id: 'n-back', name: 'N-Back', description: 'Remember and match items from N steps back in a sequence. Scientifically proven to enhance working memory capacity.' },
   { id: 'stroop', name: 'Stroop Test', description: 'Name the color of words while ignoring their meaning. Trains cognitive control and selective attention.' },
   { id: 'mental-rotation', name: 'Mental Rotation', description: 'Identify if rotated shapes match the original. Develops spatial reasoning and visualization abilities.' },

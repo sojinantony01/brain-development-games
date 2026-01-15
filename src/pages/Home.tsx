@@ -45,11 +45,11 @@ export default function Home(): JSX.Element {
     return () => window.removeEventListener('progress-updated', handler)
   }, [])
 
-  function startGame(): void {
+  const startGame = (): void => {
     navigate(`/games/${selected}`)
   }
 
-  function handleReset(): void {
+  const handleReset = (): void => {
     resetAllProgress()
     setProgress({})
   }

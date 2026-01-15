@@ -7,7 +7,7 @@ export type SchulteProps = {
   level: number
 }
 
-function sizeForLevel(level: number): number {
+const sizeForLevel = (level: number): number => {
   if (level === 1) return 3
   if (level === 2) return 4
   if (level === 3) return 5
@@ -15,7 +15,7 @@ function sizeForLevel(level: number): number {
   return 5
 }
 
-export default function SchulteTable({ level }: SchulteProps): JSX.Element {
+const SchulteTable = ({ level }: SchulteProps): JSX.Element => {
   const size = useMemo(() => sizeForLevel(level), [level])
   const total = size * size
   const numbers = useMemo(() => {
@@ -39,7 +39,7 @@ export default function SchulteTable({ level }: SchulteProps): JSX.Element {
     saved.current = false
   }, [level])
 
-  function clickNumber(n: number): void {
+  const clickNumber = (n: number): void => {
     if (startTime === null) setStartTime(Date.now())
     if (n === next) {
       if (next === total) {
@@ -57,7 +57,7 @@ export default function SchulteTable({ level }: SchulteProps): JSX.Element {
     }
   }
 
-  function reset(): void {
+  const reset = (): void => {
     setNext(1)
     setStartTime(null)
     setTime(null)
@@ -67,40 +67,67 @@ export default function SchulteTable({ level }: SchulteProps): JSX.Element {
   return (
     <>
       <CelebrationAnimation show={time !== null} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Schulte Table (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Find numbers from 1 to {total} as fast as you can.</p>
-
-      <div
-        className="grid gap-2"
-        style={{ gridTemplateColumns: `repeat(${size}, minmax(40px, 1fr))` }}
-      >
-        {numbers.map((n) => (
-          <button
-            key={n}
-            onClick={() => clickNumber(n)}
-            className={`p-3 border rounded ${n < next ? 'bg-emerald-100 text-emerald-800' : 'bg-white'}`}
-          >
-            {n}
-          </button>
-        ))}
-      </div>
-
-      <div className="mt-4 flex items-center gap-4">
-        <div className="text-sm text-slate-500">Next: {next}</div>
-        {time !== null && <div className="text-sm text-slate-700">Time: {(time / 1000).toFixed(2)}s</div>}
-        <button onClick={reset} className="ml-auto px-3 py-1 bg-yellow-400 rounded">Reset</button>
-      </div>
-      
-      {time !== null && (
-        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ Completed in {(time / 1000).toFixed(2)}s!
-          <div className="mt-2">
-            <NextLevelButton currentLevel={level} />
-          </div>
+      <div className="bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 p-8 rounded-2xl shadow-xl">
+        <div className="text-center mb-6">
+          <h2 className="text-4xl font-bold text-orange-700 flex items-center justify-center gap-3">
+            🔢 Number Hunt
+            <span className="text-2xl bg-orange-100 px-4 py-1 rounded-full">Level {level}</span>
+          </h2>
+          <p className="text-lg text-slate-600 mt-2">Find numbers from 1 to {total} as fast as you can! ⚡</p>
         </div>
-      )}
-    </div>
+
+        <div className="mb-6 flex gap-4 justify-center text-lg font-bold">
+          <div className="bg-white px-8 py-4 rounded-xl shadow-md">
+            <span className="text-blue-600">🎯 Next:</span> <span className="text-4xl text-blue-700">{next}</span>
+          </div>
+          {time !== null && (
+            <div className="bg-white px-8 py-4 rounded-xl shadow-md">
+              <span className="text-green-600">⏱️ Time:</span> <span className="text-4xl text-green-700">{(time / 1000).toFixed(2)}s</span>
+            </div>
+          )}
+        </div>
+
+        <div
+          className="grid gap-3 mb-6 max-w-2xl mx-auto"
+          style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
+        >
+          {numbers.map((n) => (
+            <button
+              key={n}
+              onClick={() => clickNumber(n)}
+              className={`aspect-square text-3xl font-black rounded-xl transition-all transform hover:scale-105 shadow-lg ${
+                n < next
+                  ? 'bg-gradient-to-br from-emerald-400 to-green-500 text-white scale-95 opacity-60'
+                  : n === next
+                  ? 'bg-gradient-to-br from-yellow-400 to-orange-400 text-white ring-4 ring-yellow-300 animate-pulse'
+                  : 'bg-gradient-to-br from-blue-400 to-indigo-500 text-white hover:from-blue-500 hover:to-indigo-600'
+              }`}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex justify-center">
+          <button
+            onClick={reset}
+            className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+          >
+            🔄 Reset
+          </button>
+        </div>
+        
+        {time !== null && (
+          <div className="mt-6 p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-4 border-emerald-300">
+            <div className="text-3xl font-bold text-center mb-2">🎉 Amazing! Completed in {(time / 1000).toFixed(2)}s! 🎉</div>
+            <div className="flex justify-center mt-4">
+              <NextLevelButton currentLevel={level} />
+            </div>
+          </div>
+        )}
+      </div>
     </>
   )
 }
+
+export default SchulteTable

@@ -9,7 +9,7 @@ export type LeaderboardEntry = {
 
 const STORAGE_KEY = 'mind-arcade-leaderboard'
 
-function load(): LeaderboardEntry[] {
+const load = (): LeaderboardEntry[] => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
@@ -20,7 +20,7 @@ function load(): LeaderboardEntry[] {
   }
 }
 
-function save(entries: LeaderboardEntry[]): void {
+const save = (entries: LeaderboardEntry[]): void => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries))
     window.dispatchEvent(new Event('leaderboard-updated'))
@@ -29,12 +29,12 @@ function save(entries: LeaderboardEntry[]): void {
   }
 }
 
-export function getLeaderboard(limit = 10): LeaderboardEntry[] {
+export const getLeaderboard = (limit = 10): LeaderboardEntry[] => {
   const all = load()
   return all.sort((a, b) => b.score - a.score).slice(0, limit)
 }
 
-export function addLeaderboardEntry(entry: Omit<LeaderboardEntry, 'id' | 'when'>): void {
+export const addLeaderboardEntry = (entry: Omit<LeaderboardEntry, 'id' | 'when'>): void => {
   const all = load()
   
   // Remove any existing entries for the same game and level (keep only the latest)
@@ -45,7 +45,7 @@ export function addLeaderboardEntry(entry: Omit<LeaderboardEntry, 'id' | 'when'>
   save(filtered)
 }
 
-export function resetLeaderboard(): void {
+export const resetLeaderboard = (): void => {
   localStorage.removeItem(STORAGE_KEY)
   window.dispatchEvent(new Event('leaderboard-updated'))
 }

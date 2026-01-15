@@ -31,7 +31,7 @@ type Statistics = {
   weightedScore: number
 }
 
-function calculateStatistics(entries: LeaderboardEntry[], totalPossibleGames: number): Statistics {
+const calculateStatistics = (entries: LeaderboardEntry[], totalPossibleGames: number): Statistics => {
   if (entries.length === 0) {
     return { totalGames: 0, averageScore: 0, averageLevel: 0, weightedScore: 0 }
   }

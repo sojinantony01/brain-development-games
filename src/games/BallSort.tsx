@@ -16,7 +16,7 @@ type LevelConfig = {
   ballsPerTube: number
 }
 
-function getLevelConfig(level: number): LevelConfig {
+const getLevelConfig = (level: number): LevelConfig => {
   switch (level) {
     case 1:
       return { colors: ['red', 'blue'], tubesCount: 3, ballsPerTube: 3 }
@@ -43,7 +43,7 @@ function getLevelConfig(level: number): LevelConfig {
   }
 }
 
-function shuffleArray<T>(array: T[]): T[] {
+const shuffleArray = <T,>(array: T[]): T[] => {
   const arr = [...array]
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
@@ -52,7 +52,7 @@ function shuffleArray<T>(array: T[]): T[] {
   return arr
 }
 
-function generateInitialTubes(config: LevelConfig): Tube[] {
+const generateInitialTubes = (config: LevelConfig): Tube[] => {
   const { colors, tubesCount, ballsPerTube } = config
   
   // Create balls for each color
@@ -82,7 +82,7 @@ function generateInitialTubes(config: LevelConfig): Tube[] {
   return tubes
 }
 
-function checkWin(tubes: Tube[], config: LevelConfig): boolean {
+const checkWin = (tubes: Tube[], config: LevelConfig): boolean => {
   const { ballsPerTube } = config
   
   for (const tube of tubes) {
@@ -133,7 +133,7 @@ export default function BallSort({ level }: BallSortProps): JSX.Element {
     }
   }, [tubes, config, won, level, moves])
 
-  function handleTubeClick(index: number): void {
+  const handleTubeClick = (index: number): void => {
     if (won) return
 
     if (selectedTube === null) {
@@ -181,7 +181,7 @@ export default function BallSort({ level }: BallSortProps): JSX.Element {
     }
   }
 
-  function reset(): void {
+  const reset = (): void => {
     setTubes(generateInitialTubes(config))
     setSelectedTube(null)
     setMoves(0)
@@ -189,32 +189,38 @@ export default function BallSort({ level }: BallSortProps): JSX.Element {
   }
 
   return (
-    <div className="flex flex-col items-center gap-6 p-4">
+    <div className="flex flex-col items-center gap-8 p-8 bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 rounded-2xl shadow-2xl">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Ball Sort Puzzle - Level {level}</h2>
-        <p className="text-slate-600">Sort the colored balls so each tube contains only one color</p>
-        <div className="mt-2 text-sm text-slate-500">
-          Moves: {moves} | Colors: {config.colors.length}
+        <h2 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          🧪 Ball Sort Puzzle - Level {level}
+        </h2>
+        <p className="text-xl text-slate-700 font-semibold">Sort the colored balls so each tube contains only one color!</p>
+        <div className="mt-4 text-2xl font-bold bg-white/70 p-4 rounded-xl backdrop-blur">
+          <span className="text-purple-600">Moves: {moves}</span> |
+          <span className="text-pink-600 ml-2">Colors: {config.colors.length}</span>
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4 max-w-4xl">
+      <div className="flex flex-wrap justify-center gap-6 max-w-5xl p-6 bg-white/50 rounded-xl backdrop-blur border-4 border-purple-200">
         {tubes.map((tube, index) => (
           <div
             key={index}
             onClick={() => handleTubeClick(index)}
             className={`
               relative flex flex-col items-center justify-end
-              w-16 h-64 bg-slate-100 rounded-lg border-4 cursor-pointer
-              transition-all duration-200
-              ${selectedTube === index ? 'border-blue-500 scale-105' : 'border-slate-300 hover:border-slate-400'}
+              w-20 h-72 bg-gradient-to-b from-slate-100 to-slate-200 rounded-2xl border-4 cursor-pointer
+              transition-all duration-300 transform shadow-xl
+              ${selectedTube === index ? 'border-blue-500 scale-110 shadow-2xl ring-4 ring-blue-300' : 'border-slate-400 hover:border-purple-400 hover:scale-105'}
             `}
           >
             {tube.map((color, ballIndex) => (
               <div
                 key={ballIndex}
-                className="w-12 h-12 rounded-full mb-1 shadow-md transition-all duration-200"
-                style={{ backgroundColor: COLOR_MAP[color] }}
+                className="w-16 h-16 rounded-full mb-2 shadow-2xl transition-all duration-300 transform hover:scale-110"
+                style={{
+                  backgroundColor: COLOR_MAP[color],
+                  boxShadow: `0 4px 20px ${COLOR_MAP[color]}80`
+                }}
               />
             ))}
           </div>
@@ -228,17 +234,17 @@ export default function BallSort({ level }: BallSortProps): JSX.Element {
       {won && (
         <>
           <CelebrationAnimation show={won} />
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600 mb-2">
-              Level {level} Complete! 🎉
+          <div className="text-center p-6 bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl border-4 border-green-400 shadow-lg">
+            <div className="text-4xl font-bold text-green-600 mb-3">
+              🎉 Level {level} Complete! 🎉
             </div>
-            <div className="text-lg text-slate-600">
-              Completed in {moves} moves
+            <div className="text-2xl font-bold text-slate-700 mb-2">
+              ✨ Completed in {moves} moves
             </div>
-            <div className="text-lg text-slate-600">
-              Score: {Math.max(0, 100 - moves)}/100
+            <div className="text-2xl font-bold text-emerald-600">
+              🏆 Score: {Math.max(0, 100 - moves)}/100
             </div>
-            <div className="mt-4">
+            <div className="mt-6">
               <NextLevelButton currentLevel={level} />
             </div>
           </div>

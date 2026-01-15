@@ -12,7 +12,7 @@ export type JugConfig = {
   timerSeconds?: number
 }
 
-export function configForLevel(level: number): JugConfig {
+export const configForLevel = (level: number): JugConfig => {
   switch (level) {
     case 1:
       return { capacities: [3, 5], target: 4 }
@@ -39,13 +39,14 @@ export function configForLevel(level: number): JugConfig {
   }
 }
 
-export default function WaterJugs({ level }: WaterJugsProps): JSX.Element {
+const WaterJugs = ({ level }: WaterJugsProps): JSX.Element => {
   const cfg = useMemo(() => configForLevel(level), [level])
   const [jugs, setJugs] = useState<number[]>(() => cfg.capacities.map(() => 0))
   const [moves, setMoves] = useState<string[]>([])
   const [timeLeft, setTimeLeft] = useState<number | null>(cfg.timerSeconds ?? null)
   const [won, setWon] = useState<boolean>(false)
   const [resetCount, setResetCount] = useState<number>(0)
+  const [animatingJug, setAnimatingJug] = useState<number | null>(null)
 
   const resetGame = () => {
     setJugs(cfg.capacities.map(() => 0))
@@ -90,79 +91,167 @@ export default function WaterJugs({ level }: WaterJugsProps): JSX.Element {
     }
   }, [won, level, moves])
 
-  function fill(index: number): void {
-    setJugs((prev) => {
-      const copy = [...prev]
-      copy[index] = cfg.capacities[index]
-      return copy
-    })
-    setMoves((m) => [...m, `Fill ${index + 1}`])
+  const fill = (index: number): void => {
+    setAnimatingJug(index)
+    setTimeout(() => {
+      setJugs((prev) => {
+        const copy = [...prev]
+        copy[index] = cfg.capacities[index]
+        return copy
+      })
+      setMoves((m) => [...m, `Fill ${index + 1}`])
+      setAnimatingJug(null)
+    }, 600)
   }
 
-  function empty(index: number): void {
-    setJugs((prev) => {
-      const copy = [...prev]
-      copy[index] = 0
-      return copy
-    })
-    setMoves((m) => [...m, `Empty ${index + 1}`])
+  const empty = (index: number): void => {
+    setAnimatingJug(index)
+    setTimeout(() => {
+      setJugs((prev) => {
+        const copy = [...prev]
+        copy[index] = 0
+        return copy
+      })
+      setMoves((m) => [...m, `Empty ${index + 1}`])
+      setAnimatingJug(null)
+    }, 400)
   }
 
-  function pour(from: number, to: number): void {
-    setJugs((prev) => {
-      const copy = [...prev]
-      const amount = Math.min(copy[from], cfg.capacities[to] - copy[to])
-      copy[from] -= amount
-      copy[to] += amount
-      return copy
-    })
-    setMoves((m) => [...m, `Pour ${from + 1} -> ${to + 1}`])
+  const pour = (from: number, to: number): void => {
+    setAnimatingJug(to)
+    setTimeout(() => {
+      setJugs((prev) => {
+        const copy = [...prev]
+        const amount = Math.min(copy[from], cfg.capacities[to] - copy[to])
+        copy[from] -= amount
+        copy[to] += amount
+        return copy
+      })
+      setMoves((m) => [...m, `Pour ${from + 1} -> ${to + 1}`])
+      setAnimatingJug(null)
+    }, 500)
   }
 
   const isTimeUp = timeLeft !== null && timeLeft <= 0
 
+  const renderJug = (index: number, capacity: number, current: number) => {
+    const fillPercentage = (current / capacity) * 100
+    const isAnimating = animatingJug === index
+    const jugColors = ['bg-gradient-to-b from-blue-400 to-blue-600', 'bg-gradient-to-b from-purple-400 to-purple-600', 'bg-gradient-to-b from-pink-400 to-pink-600']
+    const waterColors = ['bg-gradient-to-t from-cyan-400 to-cyan-300', 'bg-gradient-to-t from-blue-400 to-blue-300', 'bg-gradient-to-t from-teal-400 to-teal-300']
+    
+    return (
+      <div className="flex flex-col items-center gap-3">
+        <div className="text-lg font-bold text-indigo-700">🏺 Jug {index + 1}</div>
+        
+        {/* Jar Container */}
+        <div className="relative w-32 h-48 rounded-b-3xl border-4 border-indigo-400 bg-gradient-to-b from-blue-50 to-blue-100 shadow-lg overflow-hidden">
+          {/* Jar neck */}
+          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-16 h-6 bg-gradient-to-b from-indigo-300 to-indigo-400 rounded-t-lg border-2 border-indigo-400"></div>
+          
+          {/* Water with animation */}
+          <div
+            className={`absolute bottom-0 left-0 right-0 ${waterColors[index % 3]} transition-all duration-500 ease-out ${isAnimating ? 'animate-pulse' : ''}`}
+            style={{
+              height: `${fillPercentage}%`,
+              boxShadow: 'inset 0 2px 8px rgba(255,255,255,0.5)'
+            }}
+          >
+            {/* Water surface animation */}
+            <div className="absolute top-0 left-0 right-0 h-2 bg-white opacity-30 animate-pulse"></div>
+            {/* Bubbles */}
+            {current > 0 && (
+              <>
+                <div className="absolute bottom-2 left-4 w-2 h-2 bg-white rounded-full opacity-60 animate-bounce" style={{ animationDelay: '0s', animationDuration: '2s' }}></div>
+                <div className="absolute bottom-6 right-6 w-1.5 h-1.5 bg-white rounded-full opacity-50 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '2.5s' }}></div>
+                <div className="absolute bottom-10 left-8 w-1 h-1 bg-white rounded-full opacity-40 animate-bounce" style={{ animationDelay: '1s', animationDuration: '3s' }}></div>
+              </>
+            )}
+          </div>
+          
+          {/* Measurement lines */}
+          {Array.from({ length: capacity }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute left-0 right-0 border-t border-indigo-300 border-dashed opacity-40"
+              style={{ bottom: `${((i + 1) / capacity) * 100}%` }}
+            >
+              <span className="absolute -left-8 -top-2 text-xs text-indigo-600">{i + 1}</span>
+            </div>
+          ))}
+        </div>
+        
+        {/* Display */}
+        <div className="text-center">
+          <div className="text-3xl font-bold text-indigo-700">{current}L</div>
+          <div className="text-sm text-slate-500">of {capacity}L</div>
+        </div>
+        
+        {/* Buttons */}
+        <div className="flex gap-2">
+          <button
+            className="px-4 py-2 bg-gradient-to-r from-green-400 to-green-500 text-white rounded-lg font-bold shadow-md hover:shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            onClick={() => fill(index)}
+            disabled={won || isTimeUp || isAnimating}
+          >
+            💧 Fill
+          </button>
+          <button
+            className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-lg font-bold shadow-md hover:shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            onClick={() => empty(index)}
+            disabled={won || isTimeUp || isAnimating}
+          >
+            🚰 Empty
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
       <CelebrationAnimation show={won} />
-      <div className="bg-white p-6 rounded shadow">
-        <div className="flex justify-between items-start mb-4">
+      <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-8 rounded-2xl shadow-xl">
+        <div className="flex justify-between items-start mb-6">
           <div>
-            <h2 className="text-xl font-bold">Water Jugs (Level {level})</h2>
-            <p className="text-slate-600">Target: <strong>{cfg.target}L</strong></p>
+            <h2 className="text-3xl font-bold text-indigo-700 flex items-center gap-2">
+              🎯 Water Jugs Challenge
+              <span className="text-2xl bg-indigo-100 px-3 py-1 rounded-full">Level {level}</span>
+            </h2>
+            <p className="text-lg text-slate-600 mt-2">
+              Target: <strong className="text-2xl text-green-600">{cfg.target}L</strong> 💦
+            </p>
           </div>
           {!won && <ResetButton onReset={resetGame} resetCount={resetCount} />}
         </div>
 
       {cfg.timerSeconds && (
-        <div className="mb-4">Time: <strong>{timeLeft ?? cfg.timerSeconds}</strong> seconds</div>
+        <div className="mb-6 text-xl font-bold text-orange-600 bg-orange-100 px-4 py-2 rounded-lg inline-block">
+          ⏱️ Time: <strong>{timeLeft ?? cfg.timerSeconds}</strong> seconds
+        </div>
       )}
 
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-8 mb-6 justify-center flex-wrap">
         {cfg.capacities.map((cap, i) => (
-          <div key={i} className="border rounded p-4 flex-1 text-center">
-            <div className="text-sm text-slate-500">Jug {i + 1}</div>
-            <div className="text-2xl font-bold my-2">{jugs[i]}L / {cap}L</div>
-            <div className="space-x-2">
-              <button className="px-3 py-1 bg-green-500 text-white rounded" onClick={() => fill(i)} disabled={won || isTimeUp}>Fill</button>
-              <button className="px-3 py-1 bg-yellow-400 rounded" onClick={() => empty(i)} disabled={won || isTimeUp}>Empty</button>
-            </div>
+          <div key={i}>
+            {renderJug(i, cap, jugs[i])}
           </div>
         ))}
       </div>
 
-      <div className="mb-4">
-        <h3 className="font-semibold mb-2">Pour</h3>
-        <div className="flex gap-2 flex-wrap">
+      <div className="mb-6 bg-white p-4 rounded-xl shadow-md">
+        <h3 className="text-xl font-bold text-indigo-700 mb-3">🔄 Pour Water</h3>
+        <div className="flex gap-2 flex-wrap justify-center">
           {cfg.capacities.map((_, i) =>
             cfg.capacities.map((_, j) =>
               i !== j ? (
                 <button
                   key={`${i}-${j}`}
-                  className="px-3 py-1 bg-indigo-600 text-white rounded"
+                  className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg font-bold shadow-md hover:shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   onClick={() => pour(i, j)}
-                  disabled={won || isTimeUp}
+                  disabled={won || isTimeUp || animatingJug !== null}
                 >
-                  {`Jug ${i + 1} → ${j + 1}`}
+                  {`Jug ${i + 1} ➜ ${j + 1}`}
                 </button>
               ) : null
             )
@@ -170,26 +259,35 @@ export default function WaterJugs({ level }: WaterJugsProps): JSX.Element {
         </div>
       </div>
 
-      <div className="mb-4">
-        <h3 className="font-semibold">Moves</h3>
-        <ul className="list-disc pl-6">
-          {moves.slice().reverse().map((m, idx) => (
-            <li key={idx}>{m}</li>
-          ))}
-        </ul>
+      <div className="mb-6 bg-white p-4 rounded-xl shadow-md">
+        <h3 className="text-xl font-bold text-indigo-700 mb-3">📝 Move History</h3>
+        <div className="max-h-32 overflow-y-auto">
+          <ul className="space-y-1">
+            {moves.slice().reverse().map((m, idx) => (
+              <li key={idx} className="text-slate-700 bg-slate-50 px-3 py-1 rounded">
+                {idx + 1}. {m}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       {won ? (
-        <div className="p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ You achieved the target!
+        <div className="p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-2 border-emerald-300">
+          <div className="text-2xl font-bold mb-2">🎉 Amazing! You achieved the target! 🎉</div>
+          <div className="text-lg">You completed it in {moves.length} moves!</div>
           <div className="mt-4 flex flex-col gap-2">
             <NextLevelButton currentLevel={level} />
           </div>
         </div>
       ) : isTimeUp ? (
-        <div className="p-4 bg-red-100 text-red-800 rounded">⏱ Time's up!</div>
+        <div className="p-6 bg-gradient-to-r from-red-100 to-orange-100 text-red-800 rounded-xl shadow-lg border-2 border-red-300">
+          <div className="text-2xl font-bold">⏱️ Time's up! Try again! 💪</div>
+        </div>
       ) : null}
       </div>
     </>
   )
 }
+
+export default WaterJugs

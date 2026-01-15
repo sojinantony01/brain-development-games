@@ -7,12 +7,12 @@ export type NBackProps = {
   level: number
 }
 
-function randItem(): string {
+const randItem = (): string => {
   const letters = 'ABCDEFGH'
   return letters[Math.floor(Math.random() * letters.length)]
 }
 
-export default function NBack({ level }: NBackProps): JSX.Element {
+const NBack = ({ level }: NBackProps): JSX.Element => {
   const n = Math.min(Math.max(1, level <= 9 ? level : 2), 10) // level 1 -> 1-back, etc; for level 10 we'll treat specially as dual N-back
   const [sequence, setSequence] = useState<string[]>([])
   const [index, setIndex] = useState(0)
@@ -34,12 +34,12 @@ export default function NBack({ level }: NBackProps): JSX.Element {
     }
   }, [level])
 
-  function step(): void {
+  const step = (): void => {
     setSequence((s) => [...s, randItem()])
     setIndex((i) => i + 1)
   }
 
-  function start(): void {
+  const start = (): void => {
     setSequence([])
     setIndex(0)
     setScore(0)
@@ -48,7 +48,7 @@ export default function NBack({ level }: NBackProps): JSX.Element {
     intervalRef.current = window.setInterval(step, Math.max(800 - level * 50, 300))
   }
 
-  function stop(): void {
+  const stop = (): void => {
     setRunning(false)
     if (intervalRef.current) {
       window.clearInterval(intervalRef.current)
@@ -56,7 +56,7 @@ export default function NBack({ level }: NBackProps): JSX.Element {
     }
   }
 
-  function pressMatch(): void {
+  const pressMatch = (): void => {
     // check if current item matches item n steps ago
     const curIdx = sequence.length - 1
     if (curIdx - n >= 0 && sequence[curIdx] === sequence[curIdx - n]) {
@@ -82,32 +82,72 @@ export default function NBack({ level }: NBackProps): JSX.Element {
   return (
     <>
       <CelebrationAnimation show={completed} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">N-Back (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Current N: {level === 10 ? 'Dual N-Back' : n}</p>
+      <div className="bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 p-8 rounded-2xl shadow-xl">
+        <div className="text-center mb-6">
+          <h2 className="text-4xl font-bold text-blue-700 flex items-center justify-center gap-3">
+            🧠 Memory Challenge
+            <span className="text-2xl bg-blue-100 px-4 py-1 rounded-full">Level {level}</span>
+          </h2>
+          <p className="text-lg text-slate-600 mt-2">
+            {level === 10 ? '🎯 Dual N-Back Mode!' : `Remember ${n} steps back! 🎯`}
+          </p>
+        </div>
 
-      <div className="mb-4">
-        <div className="text-2xl font-bold">{sequence[sequence.length - 1] ?? '-'}</div>
-        <div className="text-sm text-slate-500">Score: {score}</div>
-      </div>
-
-      <div className="flex gap-2">
-        <button onClick={start} className="px-3 py-1 bg-green-500 text-white rounded" disabled={running}>Start</button>
-        <button onClick={stop} className="px-3 py-1 bg-yellow-400 rounded" disabled={!running}>Stop</button>
-        <button onClick={pressMatch} className="px-3 py-1 bg-indigo-600 text-white rounded">Match</button>
-      </div>
-
-      <div className="mt-4 text-sm text-slate-500">Press Match when the current item matches the one shown N steps ago.</div>
-      
-      {completed && (
-        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ Level {level} completed! Target score: {target}
-          <div className="mt-2">
-            <NextLevelButton currentLevel={level} />
+        <div className="mb-8 p-12 bg-white rounded-2xl shadow-lg border-4 border-blue-200">
+          <div className="text-9xl font-black text-center text-blue-600 animate-pulse">
+            {sequence[sequence.length - 1] ?? '🎮'}
           </div>
         </div>
-      )}
-    </div>
+
+        <div className="mb-6 text-center">
+          <div className="inline-block bg-white px-8 py-4 rounded-xl shadow-md">
+            <span className="text-2xl font-bold text-blue-700">Score: </span>
+            <span className="text-4xl font-black text-green-600">{score}</span>
+            <span className="text-2xl font-bold text-slate-500"> / {target}</span>
+          </div>
+        </div>
+
+        <div className="flex gap-4 justify-center mb-6">
+          <button
+            onClick={start}
+            className="px-8 py-4 bg-gradient-to-r from-green-400 to-green-500 text-white text-xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            disabled={running}
+          >
+            ▶️ Start
+          </button>
+          <button
+            onClick={stop}
+            className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            disabled={!running}
+          >
+            ⏸️ Stop
+          </button>
+          <button
+            onClick={pressMatch}
+            className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+          >
+            ✨ Match!
+          </button>
+        </div>
+
+        <div className="bg-blue-100 p-4 rounded-xl text-center">
+          <p className="text-lg text-blue-800 font-semibold">
+            💡 Press "Match" when the current letter matches the one shown {n} step{n > 1 ? 's' : ''} ago!
+          </p>
+        </div>
+        
+        {completed && (
+          <div className="mt-6 p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-4 border-emerald-300">
+            <div className="text-3xl font-bold text-center mb-4">🎉 Amazing! Level {level} completed! 🎉</div>
+            <div className="text-xl text-center mb-4">Target score: {target} ✨</div>
+            <div className="flex justify-center">
+              <NextLevelButton currentLevel={level} />
+            </div>
+          </div>
+        )}
+      </div>
     </>
   )
 }
+
+export default NBack

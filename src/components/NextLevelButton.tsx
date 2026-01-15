@@ -13,14 +13,14 @@ export default function NextLevelButton({ currentLevel, maxLevel = 10 }: NextLev
   const nextLevel = currentLevel + 1
   const hasNextLevel = nextLevel <= maxLevel
 
-  function goToNextLevel(): void {
+  const goToNextLevel = (): void => {
     if (!hasNextLevel) return
     const params = new URLSearchParams(search)
     params.set('level', String(nextLevel))
     navigate(`?${params.toString()}`, { replace: true })
   }
 
-  function goHome(): void {
+  const goHome = (): void => {
     navigate('/')
   }
 

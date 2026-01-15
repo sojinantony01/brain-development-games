@@ -11,18 +11,18 @@ export default function ShareButtons({ gameId, gameName, level, score }: SharePr
   const url = `${location.origin}/brain-development-games/games/${gameId}?level=${level}`
   const text = `I scored ${score ?? 'a score'} on ${gameName} (Level ${level}) in The Mind Arcade! Try it:`
 
-  function copyLink(): void {
+  const copyLink = (): void => {
     navigator.clipboard?.writeText(`${text} ${url}`)
       .then(() => alert('Link copied to clipboard'))
       .catch(() => alert('Could not copy link'))
   }
 
-  function tweet(): void {
+  const tweet = (): void => {
     const href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
     window.open(href, '_blank', 'noopener')
   }
 
-  async function nativeShare(): Promise<void> {
+  const nativeShare = async (): Promise<void> => {
     if ((navigator as any).share) {
       try {
         await (navigator as any).share({ title: gameName, text: text, url })

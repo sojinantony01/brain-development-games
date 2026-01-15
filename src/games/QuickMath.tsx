@@ -9,7 +9,7 @@ export type QuickMathProps = {
 
 type Problem = { text: string; answer: number }
 
-function generateProblem(level: number): Problem {
+const generateProblem = (level: number): Problem => {
   const a = Math.floor(Math.random() * 10) + 1
   const b = Math.floor(Math.random() * 10) + 1
   if (level <= 1) return { text: `${a} + ${b}`, answer: a + b }
@@ -22,7 +22,7 @@ function generateProblem(level: number): Problem {
   return { text: `${a} * ${b}`, answer: a * b }
 }
 
-export default function QuickMath({ level }: QuickMathProps): JSX.Element {
+const QuickMath = ({ level }: QuickMathProps): JSX.Element => {
   const [problem, setProblem] = useState<Problem>(() => generateProblem(level))
   const [input, setInput] = useState('')
   const [score, setScore] = useState(0)
@@ -47,7 +47,7 @@ export default function QuickMath({ level }: QuickMathProps): JSX.Element {
     return () => clearInterval(id)
   }, [timeLeft])
 
-  function submit(): void {
+  const submit = (): void => {
     const val = Number(input)
     const newScore = val === problem.answer ? score + 1 : Math.max(0, score - 1)
     if (val === problem.answer) setScore((s) => s + 1)
@@ -63,30 +63,75 @@ export default function QuickMath({ level }: QuickMathProps): JSX.Element {
     if (level >= 9) setTimeLeft(2000)
   }
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      submit()
+    }
+  }
+
   return (
     <>
       <CelebrationAnimation show={completed} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Quick Math (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Solve quickly: {problem.text}</p>
+      <div className="bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 p-8 rounded-2xl shadow-xl">
+        <div className="text-center mb-6">
+          <h2 className="text-4xl font-bold text-orange-700 flex items-center justify-center gap-3">
+            🧮 Quick Math Challenge
+            <span className="text-2xl bg-orange-100 px-4 py-1 rounded-full">Level {level}</span>
+          </h2>
+          <p className="text-lg text-slate-600 mt-2">Solve as fast as you can! ⚡</p>
+        </div>
 
-      <div className="flex gap-2 items-center">
-        <input className="border p-2 rounded" value={input} onChange={(e) => setInput(e.target.value)} />
-        <button onClick={submit} className="px-3 py-1 bg-indigo-600 text-white rounded">Submit</button>
-        {timeLeft !== null && <div className="text-sm text-slate-500">Time left: {(timeLeft / 1000).toFixed(2)}</div>}
-      </div>
-
-      <div className="mt-4 text-sm text-slate-500">Score: {score} / {target}</div>
-      
-      {completed && (
-        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ Level {level} completed!
-          <div className="mt-2">
-            <NextLevelButton currentLevel={level} />
+        <div className="mb-8 p-12 bg-white rounded-2xl shadow-lg border-4 border-orange-200">
+          <div className="text-7xl font-black text-center text-orange-600 mb-4">
+            {problem.text} = ?
           </div>
         </div>
-      )}
-    </div>
+
+        <div className="flex gap-4 items-center justify-center mb-6">
+          <input
+            className="text-4xl font-bold text-center border-4 border-blue-400 p-4 rounded-xl w-48 focus:ring-4 focus:ring-blue-300 focus:outline-none shadow-lg"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="?"
+            autoFocus
+          />
+          <button
+            onClick={submit}
+            className="px-8 py-4 bg-gradient-to-r from-green-400 to-green-500 text-white text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+          >
+            ✓ Submit
+          </button>
+        </div>
+
+        {timeLeft !== null && (
+          <div className="mb-6 text-center">
+            <div className="inline-block bg-red-100 px-8 py-4 rounded-xl shadow-md border-2 border-red-300">
+              <span className="text-2xl font-bold text-red-700">⏱️ Time: </span>
+              <span className="text-4xl font-black text-red-600">{(timeLeft / 1000).toFixed(2)}s</span>
+            </div>
+          </div>
+        )}
+
+        <div className="text-center mb-6">
+          <div className="inline-block bg-white px-8 py-4 rounded-xl shadow-md">
+            <span className="text-2xl font-bold text-blue-700">Score: </span>
+            <span className="text-4xl font-black text-green-600">{score}</span>
+            <span className="text-2xl font-bold text-slate-500"> / {target}</span>
+          </div>
+        </div>
+        
+        {completed && (
+          <div className="mt-6 p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-4 border-emerald-300">
+            <div className="text-3xl font-bold text-center mb-4">🎉 Brilliant! Level {level} completed! 🎉</div>
+            <div className="flex justify-center">
+              <NextLevelButton currentLevel={level} />
+            </div>
+          </div>
+        )}
+      </div>
     </>
   )
 }
+
+export default QuickMath

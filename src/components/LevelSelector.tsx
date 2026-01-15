@@ -6,7 +6,7 @@ export default function LevelSelector(): JSX.Element {
   const [search] = useSearchParams()
   const current = Number(search.get('level') ?? '1')
 
-  function setLevel(l: number): void {
+  const setLevel = (l: number): void => {
     const params = new URLSearchParams(search)
     params.set('level', String(l))
     navigate(`?${params.toString()}`, { replace: true })

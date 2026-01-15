@@ -17,7 +17,7 @@ type Item = {
   isTarget: boolean
 }
 
-function generateItems(level: number): { items: Item[]; targetCount: number } {
+const generateItems = (level: number): { items: Item[]; targetCount: number } => {
   const totalItems = Math.min(20 + level * 10, 100)
   const targetCount = Math.min(1 + Math.floor(level / 3), 5)
   const targetShape = SHAPES[Math.floor(Math.random() * SHAPES.length)]
@@ -54,7 +54,7 @@ function generateItems(level: number): { items: Item[]; targetCount: number } {
   return { items: items.sort(() => Math.random() - 0.5), targetCount }
 }
 
-export default function VisualSearch({ level }: VisualSearchProps): JSX.Element {
+const VisualSearch = ({ level }: VisualSearchProps): JSX.Element => {
   const [gameData, setGameData] = useState(() => generateItems(level))
   const [found, setFound] = useState<Set<number>>(new Set())
   const [startTime, setStartTime] = useState<number | null>(null)
@@ -74,7 +74,7 @@ export default function VisualSearch({ level }: VisualSearchProps): JSX.Element 
     saved.current = false
   }, [level])
 
-  function handleItemClick(item: Item): void {
+  const handleItemClick = (item: Item): void => {
     if (startTime === null) setStartTime(Date.now())
     if (found.has(item.id)) return
     
@@ -109,35 +109,37 @@ export default function VisualSearch({ level }: VisualSearchProps): JSX.Element 
   return (
     <>
       <CelebrationAnimation show={completed} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Visual Search (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Find all targets as quickly as possible!</p>
+      <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-8 rounded-2xl shadow-2xl">
+      <h2 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        🔍 Visual Search (Level {level})
+      </h2>
+      <p className="text-xl text-slate-700 mb-6 font-semibold">Find all targets as quickly as possible!</p>
 
-      <div className="mb-4 flex gap-4 items-center">
-        <div className="text-sm text-slate-500">
+      <div className="mb-6 flex gap-6 items-center justify-center flex-wrap bg-white/70 p-4 rounded-xl backdrop-blur">
+        <div className="text-2xl font-bold text-indigo-600">
           Score: {score} / {target}
         </div>
         {targetItem && (
-          <div className="flex items-center gap-2 px-3 py-1 bg-yellow-100 rounded">
-            <span className="text-sm">Find:</span>
-            <span className={`text-3xl ${targetItem.color}`}>{targetItem.shape}</span>
-            <span className="text-sm">({found.size}/{gameData.targetCount})</span>
+          <div className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-yellow-200 to-orange-200 rounded-xl border-4 border-yellow-400 shadow-lg">
+            <span className="text-xl font-bold">🎯 Find:</span>
+            <span className={`text-6xl ${targetItem.color} animate-bounce`}>{targetItem.shape}</span>
+            <span className="text-xl font-bold">({found.size}/{gameData.targetCount})</span>
           </div>
         )}
         {endTime && (
-          <div className="text-sm text-slate-500">
-            Time: {(endTime / 1000).toFixed(2)}s
+          <div className="text-xl font-bold text-green-600">
+            ⚡ Time: {(endTime / 1000).toFixed(2)}s
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-10 gap-1 mb-4 p-4 border rounded bg-slate-50">
+      <div className="grid grid-cols-10 gap-2 mb-6 p-6 bg-white/50 rounded-xl backdrop-blur border-4 border-purple-200">
         {gameData.items.map((item) => (
           <button
             key={item.id}
             onClick={() => handleItemClick(item)}
-            className={`text-2xl p-1 rounded transition-all ${item.color} ${
-              found.has(item.id) ? 'opacity-30 scale-75' : 'hover:scale-110'
+            className={`text-4xl p-2 rounded-lg transition-all transform ${item.color} ${
+              found.has(item.id) ? 'opacity-20 scale-50 bg-green-100' : 'hover:scale-150 hover:rotate-12 hover:shadow-lg'
             }`}
           >
             {item.shape}
@@ -146,9 +148,9 @@ export default function VisualSearch({ level }: VisualSearchProps): JSX.Element 
       </div>
 
       {completed && (
-        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ Level {level} completed!
-          <div className="mt-2">
+        <div className="mt-6 p-6 bg-gradient-to-r from-green-100 to-emerald-100 text-emerald-800 rounded-xl border-4 border-green-400 shadow-lg">
+          <div className="text-3xl font-bold mb-2">✅ Level {level} completed!</div>
+          <div className="mt-4">
             <NextLevelButton currentLevel={level} />
           </div>
         </div>
@@ -158,4 +160,4 @@ export default function VisualSearch({ level }: VisualSearchProps): JSX.Element 
   )
 }
 
-// Made with Bob
+export default VisualSearch

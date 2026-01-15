@@ -8,17 +8,17 @@ export type WorkingMemoryGridProps = {
   level: number
 }
 
-function gridSize(level: number): number {
+const gridSize = (level: number): number => {
   if (level <= 2) return 3
   if (level <= 5) return 5
   return 7
 }
 
-function itemCount(level: number): number {
+const itemCount = (level: number): number => {
   return Math.min(3 + Math.floor(level / 2), 8)
 }
 
-export default function WorkingMemoryGrid({ level }: WorkingMemoryGridProps): JSX.Element {
+const WorkingMemoryGrid = ({ level }: WorkingMemoryGridProps): JSX.Element => {
   const size = gridSize(level)
   const count = itemCount(level)
   const [positions, setPositions] = useState<number[]>([])
@@ -37,7 +37,7 @@ export default function WorkingMemoryGrid({ level }: WorkingMemoryGridProps): JS
     saved.current = false
   }, [level])
 
-  function startRound(): void {
+  const startRound = (): void => {
     const total = size * size
     const newPositions: number[] = []
     while (newPositions.length < count) {
@@ -51,7 +51,7 @@ export default function WorkingMemoryGrid({ level }: WorkingMemoryGridProps): JS
     setTimeout(() => setPhase('recall'), displayTime)
   }
 
-  function handleCellClick(index: number): void {
+  const handleCellClick = (index: number): void => {
     if (phase !== 'recall') return
     
     const newSelected = new Set(selected)
@@ -63,7 +63,7 @@ export default function WorkingMemoryGrid({ level }: WorkingMemoryGridProps): JS
     setSelected(newSelected)
   }
 
-  function handleSubmit(): void {
+  const handleSubmit = (): void => {
     const correct = positions.every(p => selected.has(p)) && selected.size === positions.length
     
     if (correct) {
@@ -86,19 +86,23 @@ export default function WorkingMemoryGrid({ level }: WorkingMemoryGridProps): JS
   return (
     <>
       <CelebrationAnimation show={completed} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Working Memory Grid (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Remember the positions and recreate them!</p>
+      <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8 rounded-2xl shadow-2xl">
+      <h2 className="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        🧠 Working Memory Grid (Level {level})
+      </h2>
+      <p className="text-xl text-slate-700 mb-6 font-semibold">Remember the positions and recreate them!</p>
 
-      <div className="mb-4 text-sm text-slate-500">
-        Score: {score} / {target} • Items: {count} • Grid: {size}x{size}
+      <div className="mb-6 text-2xl font-bold text-center bg-white/70 p-4 rounded-xl backdrop-blur">
+        <span className="text-indigo-600">Score: {score} / {target}</span> •
+        <span className="text-purple-600 ml-2">Items: {count}</span> •
+        <span className="text-blue-600 ml-2">Grid: {size}x{size}</span>
       </div>
 
       <div
-        className="grid gap-2 mb-4 mx-auto"
-        style={{ 
+        className="grid gap-3 mb-6 mx-auto p-6 bg-white/50 rounded-xl backdrop-blur border-4 border-indigo-200"
+        style={{
           gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
-          maxWidth: `${size * 60}px`
+          maxWidth: `${size * 70}px`
         }}
       >
         {Array.from({ length: size * size }, (_, i) => {
@@ -110,19 +114,19 @@ export default function WorkingMemoryGrid({ level }: WorkingMemoryGridProps): JS
               key={i}
               onClick={() => handleCellClick(i)}
               disabled={phase === 'show'}
-              className={`aspect-square rounded transition-all ${
-                isShown ? 'bg-indigo-600' :
-                isSelected ? 'bg-yellow-400' :
-                'bg-slate-200 hover:bg-slate-300'
+              className={`aspect-square rounded-xl transition-all transform shadow-md ${
+                isShown ? 'bg-gradient-to-br from-indigo-500 to-purple-600 scale-110 animate-pulse' :
+                isSelected ? 'bg-gradient-to-br from-yellow-400 to-orange-400 scale-105' :
+                'bg-gradient-to-br from-slate-200 to-slate-300 hover:bg-gradient-to-br hover:from-slate-300 hover:to-slate-400 hover:scale-105'
               } ${phase === 'show' ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             />
           )
         })}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-4 justify-center">
         {phase === 'show' && (
-          <div className="text-sm text-slate-500">Memorize the positions...</div>
+          <div className="text-2xl font-bold text-indigo-600 animate-pulse">👀 Memorize the positions...</div>
         )}
         {phase === 'recall' && (
           <>
@@ -155,4 +159,4 @@ export default function WorkingMemoryGrid({ level }: WorkingMemoryGridProps): JS
   )
 }
 
-// Made with Bob
+export default WorkingMemoryGrid

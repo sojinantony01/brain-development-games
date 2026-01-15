@@ -42,7 +42,7 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
     saved.current = false
   }, [level])
 
-  function startGame(): void {
+  const startGame = (): void => {
     const newSequence: Color[] = []
     for (let i = 0; i < sequenceLength; i++) {
       newSequence.push(COLORS[Math.floor(Math.random() * COLORS.length)])
@@ -54,7 +54,7 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
     playSequence(newSequence)
   }
 
-  async function playSequence(seq: Color[]): Promise<void> {
+  const playSequence = async (seq: Color[]): Promise<void> => {
     for (let i = 0; i < seq.length; i++) {
       await new Promise(resolve => setTimeout(resolve, playbackSpeed))
       setActiveColor(seq[i])
@@ -65,7 +65,7 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
     setIsPlaying(false)
   }
 
-  function handleColorClick(color: Color): void {
+  const handleColorClick = (color: Color): void => {
     if (!isPlayerTurn || isPlaying) return
 
     const newPlayerSequence = [...playerSequence, color]
@@ -111,55 +111,59 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
   return (
     <>
       <CelebrationAnimation show={completed} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Simon Says (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Watch the sequence and repeat it!</p>
+      <div className="bg-gradient-to-br from-red-50 via-yellow-50 to-blue-50 p-8 rounded-2xl shadow-2xl">
+      <h2 className="text-4xl font-bold mb-2 bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent">
+        🎮 Simon Says (Level {level})
+      </h2>
+      <p className="text-xl text-slate-700 mb-6 font-semibold">Watch the sequence and repeat it!</p>
 
-      <div className="mb-4 text-sm text-slate-500">
-        Sequence Length: {sequenceLength} • Speed: {playbackSpeed}ms • Score: {score} / {target}
+      <div className="mb-6 text-xl font-bold text-center bg-white/70 p-4 rounded-xl backdrop-blur">
+        <span className="text-purple-600">Length: {sequenceLength}</span> •
+        <span className="text-blue-600 ml-2">Speed: {playbackSpeed}ms</span> •
+        <span className="text-green-600 ml-2">Score: {score} / {target}</span>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-6 max-w-md mx-auto">
+      <div className="grid grid-cols-2 gap-6 mb-8 max-w-lg mx-auto">
         {COLORS.map((color) => (
           <button
             key={color}
             onClick={() => handleColorClick(color)}
             disabled={!isPlayerTurn || isPlaying}
-            className={`h-32 rounded-lg transition-all ${COLOR_CLASSES[color]} ${
-              activeColor === color ? 'ring-4 ring-white scale-95' : ''
-            } ${!isPlayerTurn || isPlaying ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+            className={`h-40 rounded-2xl transition-all transform shadow-2xl ${COLOR_CLASSES[color]} ${
+              activeColor === color ? 'ring-8 ring-white scale-90 brightness-150' : ''
+            } ${!isPlayerTurn || isPlaying ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-105'}`}
           >
-            <span className="text-white font-bold text-lg capitalize">{color}</span>
+            <span className="text-white font-bold text-2xl capitalize drop-shadow-lg">{color}</span>
           </button>
         ))}
       </div>
 
-      <div className="flex gap-2 justify-center mb-4">
+      <div className="flex gap-4 justify-center mb-6">
         <button
           onClick={startGame}
           disabled={isPlaying || isPlayerTurn}
-          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-2xl font-bold rounded-xl hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transform hover:scale-105 transition-all"
         >
-          {score === 0 ? 'Start Game' : 'New Round'}
+          {score === 0 ? '🎬 Start Game' : '🔄 New Round'}
         </button>
       </div>
 
       {isPlaying && (
-        <div className="text-center text-sm text-slate-500 mb-4">
-          🎵 Watch the sequence...
+        <div className="text-center text-2xl font-bold text-indigo-600 mb-4 animate-pulse">
+          👀 Watch the sequence...
         </div>
       )}
 
       {isPlayerTurn && (
-        <div className="text-center text-sm text-emerald-600 mb-4">
+        <div className="text-center text-2xl font-bold text-emerald-600 mb-4">
           👆 Your turn! Repeat the sequence ({playerSequence.length}/{sequence.length})
         </div>
       )}
 
       {completed && (
-        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ Level {level} completed!
-          <div className="mt-2">
+        <div className="mt-6 p-6 bg-gradient-to-r from-green-100 to-emerald-100 text-emerald-800 rounded-xl border-4 border-green-400 shadow-lg">
+          <div className="text-3xl font-bold mb-2">✅ Level {level} completed!</div>
+          <div className="mt-4">
             <NextLevelButton currentLevel={level} />
           </div>
         </div>

@@ -16,7 +16,7 @@ type Node = {
   connected: boolean
 }
 
-function generateNodes(level: number): Node[] {
+const generateNodes = (level: number): Node[] => {
   const count = Math.min(10 + level * 2, 26)
   const nodes: Node[] = []
   
@@ -47,7 +47,7 @@ function generateNodes(level: number): Node[] {
   return nodes
 }
 
-export default function TrailMaking({ level }: TrailMakingProps): JSX.Element {
+const TrailMaking = ({ level }: TrailMakingProps): JSX.Element => {
   const [nodes, setNodes] = useState<Node[]>(() => generateNodes(level))
   const [currentIndex, setCurrentIndex] = useState(0)
   const [startTime, setStartTime] = useState<number | null>(null)
@@ -64,7 +64,7 @@ export default function TrailMaking({ level }: TrailMakingProps): JSX.Element {
     saved.current = false
   }, [level])
 
-  function handleNodeClick(node: Node): void {
+  const handleNodeClick = (node: Node): void => {
     if (startTime === null) setStartTime(Date.now())
     if (node.id !== currentIndex) return
     
@@ -90,46 +90,93 @@ export default function TrailMaking({ level }: TrailMakingProps): JSX.Element {
   return (
     <>
       <CelebrationAnimation show={completed} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Trail Making (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Connect the nodes in order as fast as you can!</p>
-
-      <div className="mb-4 text-sm text-slate-500">
-        Progress: {currentIndex + 1}/{nodes.length}
-        {endTime && ` • Time: ${(endTime / 1000).toFixed(2)}s`}
-      </div>
-
-      <div className="relative w-full h-96 border rounded bg-slate-50 mb-4">
-        {nodes.map((node, idx) => (
-          <button
-            key={node.id}
-            onClick={() => handleNodeClick(node)}
-            disabled={node.connected && node.id !== currentIndex}
-            style={{ left: `${node.x}%`, top: `${node.y}%` }}
-            className={`absolute w-12 h-12 rounded-full flex items-center justify-center font-bold transform -translate-x-1/2 -translate-y-1/2 transition-all ${
-              node.connected
-                ? 'bg-emerald-500 text-white scale-90'
-                : node.id === currentIndex
-                ? 'bg-yellow-400 text-black ring-4 ring-yellow-200 animate-pulse'
-                : 'bg-indigo-500 text-white hover:scale-110'
-            }`}
-          >
-            {node.value}
-          </button>
-        ))}
-      </div>
-
-      {completed && (
-        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ Completed in {((endTime ?? 0) / 1000).toFixed(2)}s!
-          <div className="mt-2">
-            <NextLevelButton currentLevel={level} />
-          </div>
+      <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-8 rounded-2xl shadow-xl">
+        <div className="text-center mb-6">
+          <h2 className="text-4xl font-bold text-purple-700 flex items-center justify-center gap-3">
+            🎯 Connect the Dots
+            <span className="text-2xl bg-purple-100 px-4 py-1 rounded-full">Level {level}</span>
+          </h2>
+          <p className="text-lg text-slate-600 mt-2">Connect the nodes in order as fast as you can! 🚀</p>
         </div>
-      )}
-    </div>
+
+        <div className="mb-6 flex gap-4 justify-center text-lg font-bold">
+          <div className="bg-white px-8 py-4 rounded-xl shadow-md">
+            <span className="text-purple-600">📍 Progress:</span> <span className="text-3xl text-purple-700">{currentIndex + 1}/{nodes.length}</span>
+          </div>
+          {endTime && (
+            <div className="bg-white px-8 py-4 rounded-xl shadow-md">
+              <span className="text-green-600">⏱️ Time:</span> <span className="text-3xl text-green-700">{(endTime / 1000).toFixed(2)}s</span>
+            </div>
+          )}
+        </div>
+
+        <div className="relative w-full h-[500px] border-4 border-purple-300 rounded-2xl bg-gradient-to-br from-white to-purple-50 mb-6 shadow-inner">
+          {nodes.map((node, idx) => {
+            // Draw lines between connected nodes
+            if (idx > 0 && nodes[idx - 1].connected) {
+              const prevNode = nodes[idx - 1]
+              return (
+                <React.Fragment key={`line-${node.id}`}>
+                  <svg className="absolute inset-0 pointer-events-none" style={{ width: '100%', height: '100%' }}>
+                    <line
+                      x1={`${prevNode.x}%`}
+                      y1={`${prevNode.y}%`}
+                      x2={`${node.x}%`}
+                      y2={`${node.y}%`}
+                      stroke="#10b981"
+                      strokeWidth="3"
+                      strokeDasharray={node.connected ? "0" : "5,5"}
+                    />
+                  </svg>
+                  <button
+                    key={node.id}
+                    onClick={() => handleNodeClick(node)}
+                    disabled={node.connected && node.id !== currentIndex}
+                    style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                    className={`absolute w-16 h-16 rounded-full flex items-center justify-center text-2xl font-black transform -translate-x-1/2 -translate-y-1/2 transition-all shadow-lg ${
+                      node.connected
+                        ? 'bg-gradient-to-br from-emerald-400 to-green-500 text-white scale-90'
+                        : node.id === currentIndex
+                        ? 'bg-gradient-to-br from-yellow-400 to-orange-400 text-white ring-4 ring-yellow-300 animate-pulse scale-110'
+                        : 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white hover:scale-125 hover:ring-4 hover:ring-indigo-300'
+                    }`}
+                  >
+                    {node.value}
+                  </button>
+                </React.Fragment>
+              )
+            }
+            return (
+              <button
+                key={node.id}
+                onClick={() => handleNodeClick(node)}
+                disabled={node.connected && node.id !== currentIndex}
+                style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                className={`absolute w-16 h-16 rounded-full flex items-center justify-center text-2xl font-black transform -translate-x-1/2 -translate-y-1/2 transition-all shadow-lg ${
+                  node.connected
+                    ? 'bg-gradient-to-br from-emerald-400 to-green-500 text-white scale-90'
+                    : node.id === currentIndex
+                    ? 'bg-gradient-to-br from-yellow-400 to-orange-400 text-white ring-4 ring-yellow-300 animate-pulse scale-110'
+                    : 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white hover:scale-125 hover:ring-4 hover:ring-indigo-300'
+                }`}
+              >
+                {node.value}
+              </button>
+            )
+          })}
+        </div>
+
+        {completed && (
+          <div className="mt-6 p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-4 border-emerald-300">
+            <div className="text-3xl font-bold text-center mb-2">🎉 Perfect Connection! Completed in {((endTime ?? 0) / 1000).toFixed(2)}s! 🎉</div>
+            <div className="flex justify-center mt-4">
+              <NextLevelButton currentLevel={level} />
+            </div>
+          </div>
+        )}
+      </div>
     </>
   )
 }
 
-// Made with Bob
+export default TrailMaking

@@ -17,13 +17,13 @@ type Card = {
 
 const SYMBOLS = ['🎮', '🎯', '🎨', '🎭', '🎪', '🎬', '🎵', '🎸', '🎹', '🎺', '🎻', '🎲', '🎰', '🎳', '⚽', '🏀', '🏈', '⚾', '🎾', '🏐']
 
-function gridSize(level: number): number {
+const gridSize = (level: number): number => {
   if (level <= 2) return 4 // 4x4 = 8 pairs
   if (level <= 5) return 6 // 6x6 = 18 pairs
   return 8 // 8x8 = 32 pairs
 }
 
-export default function CardMatching({ level }: CardMatchingProps): JSX.Element {
+const CardMatching = ({ level }: CardMatchingProps): JSX.Element => {
   const size = gridSize(level)
   const pairCount = (size * size) / 2
   const [cards, setCards] = useState<Card[]>([])
@@ -39,7 +39,7 @@ export default function CardMatching({ level }: CardMatchingProps): JSX.Element 
     initializeGame()
   }, [level, size])
 
-  function initializeGame(): void {
+  const initializeGame = (): void => {
     const symbols = SYMBOLS.slice(0, pairCount)
     const cardPairs = [...symbols, ...symbols]
     const shuffled = cardPairs.sort(() => Math.random() - 0.5)
@@ -59,7 +59,7 @@ export default function CardMatching({ level }: CardMatchingProps): JSX.Element 
     saved.current = false
   }
 
-  function handleCardClick(id: number): void {
+  const handleCardClick = (id: number): void => {
     if (startTime === null) setStartTime(Date.now())
     if (flippedCards.length === 2) return
     if (cards[id].isFlipped || cards[id].isMatched) return
@@ -116,54 +116,78 @@ export default function CardMatching({ level }: CardMatchingProps): JSX.Element 
   return (
     <>
       <CelebrationAnimation show={completed} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Card Matching (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Find all matching pairs!</p>
-
-      <div className="mb-4 flex gap-4 text-sm text-slate-500">
-        <div>Moves: {moves}</div>
-        <div>Matches: {matches}/{pairCount}</div>
-        {endTime && <div>Time: {(endTime / 1000).toFixed(1)}s</div>}
-      </div>
-
-      <div 
-        className="grid gap-2 mb-4"
-        style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
-      >
-        {cards.map((card) => (
-          <button
-            key={card.id}
-            onClick={() => handleCardClick(card.id)}
-            disabled={card.isMatched || flippedCards.length === 2}
-            className={`aspect-square rounded-lg text-2xl font-bold transition-all ${
-              card.isFlipped || card.isMatched
-                ? 'bg-white border-2 border-indigo-400'
-                : 'bg-indigo-600 hover:bg-indigo-700'
-            } ${card.isMatched ? 'opacity-50' : ''}`}
-          >
-            {card.isFlipped || card.isMatched ? card.value : '?'}
-          </button>
-        ))}
-      </div>
-
-      <button
-        onClick={initializeGame}
-        className="px-4 py-2 bg-yellow-400 rounded hover:bg-yellow-500"
-      >
-        Reset
-      </button>
-
-      {completed && (
-        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ Completed in {moves} moves and {((endTime ?? 0) / 1000).toFixed(1)}s!
-          <div className="mt-2">
-            <NextLevelButton currentLevel={level} />
-          </div>
+      <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-yellow-50 p-8 rounded-2xl shadow-xl">
+        <div className="text-center mb-6">
+          <h2 className="text-4xl font-bold text-purple-700 flex items-center justify-center gap-3">
+            🎴 Memory Match Game
+            <span className="text-2xl bg-purple-100 px-4 py-1 rounded-full">Level {level}</span>
+          </h2>
+          <p className="text-xl text-slate-600 mt-2">Find all matching pairs! 🎯</p>
         </div>
-      )}
-    </div>
+
+        <div className="mb-6 flex gap-6 justify-center text-lg font-bold">
+          <div className="bg-white px-6 py-3 rounded-xl shadow-md">
+            <span className="text-blue-600">🎮 Moves:</span> <span className="text-2xl text-blue-700">{moves}</span>
+          </div>
+          <div className="bg-white px-6 py-3 rounded-xl shadow-md">
+            <span className="text-green-600">✨ Matches:</span> <span className="text-2xl text-green-700">{matches}/{pairCount}</span>
+          </div>
+          {endTime && (
+            <div className="bg-white px-6 py-3 rounded-xl shadow-md">
+              <span className="text-orange-600">⏱️ Time:</span> <span className="text-2xl text-orange-700">{(endTime / 1000).toFixed(1)}s</span>
+            </div>
+          )}
+        </div>
+
+        <div
+          className="grid gap-3 mb-6"
+          style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
+        >
+          {cards.map((card) => (
+            <button
+              key={card.id}
+              onClick={() => handleCardClick(card.id)}
+              disabled={card.isMatched || flippedCards.length === 2}
+              className={`aspect-square rounded-2xl text-4xl font-bold transition-all duration-300 transform hover:scale-105 shadow-lg ${
+                card.isFlipped || card.isMatched
+                  ? 'bg-gradient-to-br from-white to-blue-50 border-4 border-blue-400 rotate-0'
+                  : 'bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-4 border-purple-600'
+              } ${card.isMatched ? 'opacity-60 scale-95' : ''} ${
+                card.isFlipped && !card.isMatched ? 'animate-bounce-in' : ''
+              }`}
+            >
+              {card.isFlipped || card.isMatched ? (
+                <span className="drop-shadow-lg">{card.value}</span>
+              ) : (
+                <span className="text-white text-5xl">❓</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex justify-center">
+          <button
+            onClick={initializeGame}
+            className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+          >
+            🔄 New Game
+          </button>
+        </div>
+
+        {completed && (
+          <div className="mt-6 p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-4 border-emerald-300">
+            <div className="text-3xl font-bold mb-2 text-center">🎉 Awesome! You found all pairs! 🎉</div>
+            <div className="text-xl text-center mb-4">
+              Completed in <span className="font-bold text-2xl">{moves}</span> moves and <span className="font-bold text-2xl">{((endTime ?? 0) / 1000).toFixed(1)}s</span>!
+            </div>
+            <div className="flex justify-center">
+              <NextLevelButton currentLevel={level} />
+            </div>
+          </div>
+        )}
+      </div>
     </>
   )
 }
 
-// Made with Bob
+export default CardMatching

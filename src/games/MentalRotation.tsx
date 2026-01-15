@@ -7,7 +7,7 @@ export type MentalRotationProps = {
 }
 
 // Simple shape generator using letters as base shapes for L1-2 and blocks for higher levels
-function generatePair(level: number): { left: string; right: string; same: boolean } {
+const generatePair = (level: number): { left: string; right: string; same: boolean } => {
   if (level <= 2) {
     // use single letter and sometimes mirror it
     const letters = ['R', 'L', 'E', 'F']
@@ -26,7 +26,7 @@ function generatePair(level: number): { left: string; right: string; same: boole
   return { left: base, right, same }
 }
 
-function rotateAscii(s: string, angle: number): string {
+const rotateAscii = (s: string, angle: number): string => {
   // trivial "rotation" by rearranging characters for demo purposes
   if (angle === 0) return s
   if (angle === 90) return s.split('').reverse().join('')
@@ -34,7 +34,7 @@ function rotateAscii(s: string, angle: number): string {
   return s.replace(/./g, (c) => c === '▮' ? '▯' : '▮')
 }
 
-export default function MentalRotation({ level }: MentalRotationProps): JSX.Element {
+const MentalRotation = ({ level }: MentalRotationProps): JSX.Element => {
   const [pair, setPair] = useState(() => generatePair(level))
   const [score, setScore] = useState(0)
   const [attempts, setAttempts] = useState(0)
@@ -51,11 +51,11 @@ export default function MentalRotation({ level }: MentalRotationProps): JSX.Elem
     saved.current = false
   }, [level])
 
-  function respawn(): void {
+  const respawn = (): void => {
     setPair(generatePair(level))
   }
 
-  function answer(isSame: boolean): void {
+  const answer = (isSame: boolean): void => {
     setAttempts((a) => a + 1)
     const newScore = score + (isSame === pair.same ? 1 : 0)
     if (isSame === pair.same) setScore((s) => s + 1)
@@ -73,32 +73,60 @@ export default function MentalRotation({ level }: MentalRotationProps): JSX.Elem
   return (
     <>
       <CelebrationAnimation show={completed} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Mental Rotation (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Decide if the right shape is the same as the left after rotation/mirroring.</p>
+      <div className="bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 p-8 rounded-2xl shadow-xl">
+        <div className="text-center mb-6">
+          <h2 className="text-4xl font-bold text-teal-700 flex items-center justify-center gap-3">
+            🔄 Shape Matcher
+            <span className="text-2xl bg-teal-100 px-4 py-1 rounded-full">Level {level}</span>
+          </h2>
+          <p className="text-lg text-slate-600 mt-2">Are these shapes the same after rotation? 🤔</p>
+        </div>
 
-      <div className="flex gap-6 justify-center items-center my-4">
-        <div className="w-40 h-24 flex items-center justify-center border rounded bg-slate-50 text-2xl font-mono">{pair.left}</div>
-        <div className="text-2xl">⇨</div>
-        <div className="w-40 h-24 flex items-center justify-center border rounded bg-slate-50 text-2xl font-mono">{pair.right}</div>
-      </div>
-
-      <div className="flex gap-2 justify-center">
-        <button onClick={() => answer(true)} className="px-4 py-2 bg-green-500 text-white rounded">Same</button>
-        <button onClick={() => answer(false)} className="px-4 py-2 bg-red-500 text-white rounded">Mirror/Different</button>
-      </div>
-
-      <div className="mt-4 text-sm text-slate-500">Score: {score} / {target} • Attempts: {attempts}</div>
-      
-      {completed && (
-        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ Level {level} completed!
-          <div className="mt-2">
-            <NextLevelButton currentLevel={level} />
+        <div className="mb-6 flex gap-4 justify-center text-lg font-bold">
+          <div className="bg-white px-8 py-4 rounded-xl shadow-md">
+            <span className="text-teal-600">🎯 Score:</span> <span className="text-3xl text-teal-700">{score}/{target}</span>
+          </div>
+          <div className="bg-white px-8 py-4 rounded-xl shadow-md">
+            <span className="text-blue-600">🎮 Attempts:</span> <span className="text-3xl text-blue-700">{attempts}</span>
           </div>
         </div>
-      )}
-    </div>
+
+        <div className="flex gap-8 justify-center items-center my-8">
+          <div className="w-56 h-40 flex items-center justify-center border-4 border-teal-400 rounded-2xl bg-gradient-to-br from-white to-teal-50 text-6xl font-mono shadow-lg transform hover:scale-105 transition-all">
+            {pair.left}
+          </div>
+          <div className="text-5xl animate-pulse">🔄</div>
+          <div className="w-56 h-40 flex items-center justify-center border-4 border-cyan-400 rounded-2xl bg-gradient-to-br from-white to-cyan-50 text-6xl font-mono shadow-lg transform hover:scale-105 transition-all">
+            {pair.right}
+          </div>
+        </div>
+
+        <div className="flex gap-4 justify-center mb-6">
+          <button
+            onClick={() => answer(true)}
+            className="px-12 py-6 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+          >
+            ✅ Same
+          </button>
+          <button
+            onClick={() => answer(false)}
+            className="px-12 py-6 bg-gradient-to-r from-red-400 to-pink-500 text-white text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+          >
+            ❌ Different
+          </button>
+        </div>
+        
+        {completed && (
+          <div className="mt-6 p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-4 border-emerald-300">
+            <div className="text-3xl font-bold text-center mb-2">🎉 Perfect! Level {level} completed! 🎉</div>
+            <div className="flex justify-center mt-4">
+              <NextLevelButton currentLevel={level} />
+            </div>
+          </div>
+        )}
+      </div>
     </>
   )
 }
+
+export default MentalRotation

@@ -13,17 +13,17 @@ const WORD_LISTS = {
   hard: ['complex', 'rotation', 'sequence', 'pattern', 'cognitive', 'challenge']
 }
 
-function scramble(word: string): string {
+const scramble = (word: string): string => {
   return word.split('').sort(() => Math.random() - 0.5).join('')
 }
 
-function getWordList(level: number): string[] {
+const getWordList = (level: number): string[] => {
   if (level <= 3) return WORD_LISTS.easy
   if (level <= 6) return WORD_LISTS.medium
   return WORD_LISTS.hard
 }
 
-export default function AnagramSolver({ level }: AnagramSolverProps): JSX.Element {
+const AnagramSolver = ({ level }: AnagramSolverProps): JSX.Element => {
   const wordList = getWordList(level)
   const [word, setWord] = useState('')
   const [scrambled, setScrambled] = useState('')
@@ -48,14 +48,14 @@ export default function AnagramSolver({ level }: AnagramSolverProps): JSX.Elemen
     return () => clearInterval(timer)
   }, [timeLeft])
 
-  function pickNewWord(): void {
+  const pickNewWord = (): void => {
     const newWord = wordList[Math.floor(Math.random() * wordList.length)]
     setWord(newWord)
     setScrambled(scramble(newWord))
     setInput('')
   }
 
-  function handleSubmit(): void {
+  const handleSubmit = (): void => {
     if (input.toLowerCase() === word.toLowerCase()) {
       const newScore = score + 1
       setScore(newScore)
@@ -75,54 +75,60 @@ export default function AnagramSolver({ level }: AnagramSolverProps): JSX.Elemen
   return (
     <>
       <CelebrationAnimation show={completed} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Anagram Solver (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Unscramble the letters to form words!</p>
+      <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-8 rounded-2xl shadow-2xl">
+      <h2 className="text-4xl font-bold mb-2 bg-gradient-to-r from-orange-600 to-yellow-600 bg-clip-text text-transparent">
+        🧩 Anagram Solver (Level {level})
+      </h2>
+      <p className="text-xl text-slate-700 mb-6 font-semibold">Unscramble the letters to form words!</p>
 
-      <div className="mb-4 flex gap-4 text-sm text-slate-500">
-        <div>Score: {score} / {target}</div>
-        {timeLeft !== null && <div>Time: {timeLeft}s</div>}
+      <div className="mb-6 flex gap-6 justify-center items-center bg-white/70 p-4 rounded-xl backdrop-blur">
+        <div className="text-2xl font-bold text-orange-600">Score: {score} / {target}</div>
+        {timeLeft !== null && (
+          <div className={`text-2xl font-bold ${timeLeft <= 10 ? 'text-red-600 animate-pulse' : 'text-amber-600'}`}>
+            ⏱️ Time: {timeLeft}s
+          </div>
+        )}
       </div>
 
-      <div className="mb-6 text-center">
-        <div className="text-4xl font-mono font-bold tracking-widest mb-2">
+      <div className="mb-8 text-center p-6 bg-gradient-to-r from-orange-100 to-yellow-100 rounded-2xl border-4 border-orange-300 shadow-lg">
+        <div className="text-7xl font-mono font-bold tracking-widest mb-3 bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent animate-pulse">
           {scrambled.toUpperCase()}
         </div>
-        <div className="text-sm text-slate-500">
-          {word.length} letters
+        <div className="text-xl font-bold text-slate-600">
+          📝 {word.length} letters
         </div>
       </div>
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-4 mb-6">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-          className="border p-2 rounded flex-1"
-          placeholder="Type your answer"
+          className="border-4 border-orange-300 p-4 rounded-xl text-2xl font-bold text-center flex-1 focus:border-orange-500 focus:outline-none shadow-lg"
+          placeholder="Type your answer..."
           disabled={timeLeft === 0}
         />
         <button
           onClick={handleSubmit}
           disabled={timeLeft === 0}
-          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50"
+          className="px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white text-2xl font-bold rounded-xl hover:from-orange-600 hover:to-amber-700 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Submit
+          ✓ Submit
         </button>
       </div>
 
       <button
         onClick={pickNewWord}
-        className="px-3 py-1 bg-yellow-400 rounded hover:bg-yellow-500 text-sm"
+        className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xl font-bold rounded-xl hover:from-yellow-500 hover:to-orange-500 shadow-lg transform hover:scale-105 transition-all"
       >
-        Skip
+        ⏭️ Skip
       </button>
 
       {completed && (
-        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ Level {level} completed!
-          <div className="mt-2">
+        <div className="mt-6 p-6 bg-gradient-to-r from-green-100 to-emerald-100 text-emerald-800 rounded-xl border-4 border-green-400 shadow-lg">
+          <div className="text-3xl font-bold mb-2">✅ Level {level} completed!</div>
+          <div className="mt-4">
             <NextLevelButton currentLevel={level} />
           </div>
         </div>
@@ -132,4 +138,4 @@ export default function AnagramSolver({ level }: AnagramSolverProps): JSX.Elemen
   )
 }
 
-// Made with Bob
+export default AnagramSolver

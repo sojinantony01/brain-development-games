@@ -10,11 +10,11 @@ export type WordScrambleProps = {
 const WORDS = ['cat', 'dog', 'sun', 'moon', 'earth', 'brain', 'react', 'vital', 'garden', 'puzzle', 'complex', 'rotation']
 const FAKE_WORDS = ['blorf', 'quazz', 'splick']
 
-function scramble(word: string): string {
+const scramble = (word: string): string => {
   return word.split('').sort(() => Math.random() - 0.5).join('')
 }
 
-export default function WordScramble({ level }: WordScrambleProps): JSX.Element {
+const WordScramble = ({ level }: WordScrambleProps): JSX.Element => {
   const pool = useMemo(() => {
     if (level <= 1) return WORDS.filter((w) => w.length === 3)
     if (level <= 4) return WORDS.filter((w) => w.length <= 5)
@@ -37,14 +37,14 @@ export default function WordScramble({ level }: WordScrambleProps): JSX.Element 
     pick()
   }, [level])
 
-  function pick(): void {
+  const pick = (): void => {
     const w = pool[Math.floor(Math.random() * pool.length)]
     setWord(w)
     setScr(scramble(w))
     setInput('')
   }
 
-  function submitGuess(): void {
+  const submitGuess = (): void => {
     if (input.toLowerCase() === word.toLowerCase()) {
       const newScore = score + 1
       setScore((s) => s + 1)
@@ -62,22 +62,39 @@ export default function WordScramble({ level }: WordScrambleProps): JSX.Element 
   return (
     <>
       <CelebrationAnimation show={completed} />
-      <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Word Scramble (Level {level})</h2>
-      <p className="text-slate-600 mb-4">Unscramble the letters to form a real word.</p>
+      <div className="bg-gradient-to-br from-green-50 via-teal-50 to-cyan-50 p-8 rounded-2xl shadow-2xl">
+      <h2 className="text-4xl font-bold mb-2 bg-gradient-to-r from-green-600 to-cyan-600 bg-clip-text text-transparent">
+        🔤 Word Scramble (Level {level})
+      </h2>
+      <p className="text-xl text-slate-700 mb-6 font-semibold">Unscramble the letters to form a real word!</p>
 
-      <div className="text-3xl font-mono mb-4">{scr}</div>
-      <div className="flex gap-2 items-center">
-        <input className="border p-2 rounded" value={input} onChange={(e) => setInput(e.target.value)} />
-        <button onClick={submitGuess} className="px-3 py-1 bg-indigo-600 text-white rounded">Submit</button>
+      <div className="text-6xl font-mono font-bold mb-8 text-center bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent tracking-widest animate-pulse">
+        {scr.toUpperCase()}
+      </div>
+      <div className="flex gap-4 items-center justify-center mb-6">
+        <input
+          className="border-4 border-teal-300 p-4 rounded-xl text-2xl font-bold text-center flex-1 max-w-md focus:border-teal-500 focus:outline-none shadow-lg"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && submitGuess()}
+          placeholder="Type your answer..."
+        />
+        <button
+          onClick={submitGuess}
+          className="px-8 py-4 bg-gradient-to-r from-green-500 to-teal-600 text-white text-2xl font-bold rounded-xl hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all"
+        >
+          ✓ Submit
+        </button>
       </div>
 
-      <div className="mt-4 text-sm text-slate-500">Score: {score} / {target}</div>
+      <div className="text-2xl font-bold text-center text-green-600 bg-white/70 p-4 rounded-xl backdrop-blur">
+        Score: {score} / {target}
+      </div>
       
       {completed && (
-        <div className="mt-4 p-4 bg-emerald-100 text-emerald-800 rounded">
-          ✅ Level {level} completed!
-          <div className="mt-2">
+        <div className="mt-6 p-6 bg-gradient-to-r from-green-100 to-emerald-100 text-emerald-800 rounded-xl border-4 border-green-400 shadow-lg">
+          <div className="text-3xl font-bold mb-2">✅ Level {level} completed!</div>
+          <div className="mt-4">
             <NextLevelButton currentLevel={level} />
           </div>
         </div>
@@ -86,3 +103,5 @@ export default function WordScramble({ level }: WordScrambleProps): JSX.Element 
     </>
   )
 }
+
+export default WordScramble

@@ -62,7 +62,8 @@ const PatternMatrix = ({ level }: PatternMatrixProps): JSX.Element => {
       if (newScore >= target) {
         // Completed all rounds!
         if (!saved.current) {
-          markGameCompletedLevel('pattern-matrix', level, newScore, target)
+          const percentageScore = Math.min(100, Math.round((newScore / target) * 100))
+          markGameCompletedLevel('pattern-matrix', level, percentageScore, 100)
           saved.current = true
         }
         setCompleted(true)

@@ -91,7 +91,9 @@ const VisualSearch = ({ level }: VisualSearchProps): JSX.Element => {
         
         if (newScore >= target) {
           if (!saved.current) {
-            markGameCompletedLevel('visual-search', level, Math.round(10000 / time), target)
+            const rawScore = Math.round(10000 / time)
+            const percentageScore = Math.min(100, Math.round((rawScore / target) * 100))
+            markGameCompletedLevel('visual-search', level, percentageScore, 100)
             saved.current = true
           }
           setCompleted(true)

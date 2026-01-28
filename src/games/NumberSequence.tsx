@@ -70,7 +70,8 @@ const NumberSequence = ({ level }: NumberSequenceProps): JSX.Element => {
       setFeedback('✅ Correct!')
       
       if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('number-sequence', level, newScore, target)
+        const percentageScore = Math.min(100, Math.round((newScore / target) * 100))
+        markGameCompletedLevel('number-sequence', level, percentageScore, 100)
         saved.current = true
         setCompleted(true)
       }

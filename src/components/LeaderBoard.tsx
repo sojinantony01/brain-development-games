@@ -1,66 +1,38 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { getLeaderboard, resetLeaderboard, LeaderboardEntry } from '../lib/leaderboard'
-
-const GAME_NAMES: Record<string, string> = {
-  'water-jugs': 'Water Jugs',
-  'tower-of-hanoi': 'Tower of Hanoi',
-  'ball-sort': 'Ball Sort Puzzle',
-  'n-back': 'N-Back',
-  'stroop': 'Stroop Test',
-  'mental-rotation': 'Mental Rotation',
-  'schulte-table': 'Schulte Table',
-  'maze': 'Pathway / Maze',
-  'pattern-matrix': 'Pattern Matrix',
-  'quick-math': 'Quick Math',
-  'word-scramble': 'Word Scramble',
-  'simon-says': 'Simon Says',
-  'card-matching': 'Card Matching',
-  'reaction-time': 'Reaction Time',
-  'number-sequence': 'Number Sequence',
-  'dual-task': 'Dual Task Challenge',
-  'visual-search': 'Visual Search',
-  'anagram-solver': 'Anagram Solver',
-  'trail-making': 'Trail Making',
-  'working-memory-grid': 'Working Memory Grid',
-  'logic-puzzles': 'Logic Puzzles',
-}
+import { getGameName, getTotalGames, getMaxLevel } from '../lib/gameRegistry'
 
 type Statistics = {
   totalGames: number
+  completionPercent: number
   averageScore: number
   averageLevel: number
-  weightedScore: number
+  overallScore: number
 }
 
 const calculateStatistics = (entries: LeaderboardEntry[], totalPossibleGames: number): Statistics => {
   if (entries.length === 0) {
-    return { totalGames: 0, averageScore: 0, averageLevel: 0, weightedScore: 0 }
+    return { totalGames: 0, completionPercent: 0, averageScore: 0, averageLevel: 0, overallScore: 0 }
   }
 
-  const TOTAL_POSSIBLE_GAMES = totalPossibleGames
   const totalGames = entries.length
+  const totalScore = entries.reduce((sum, e) => sum + e.score, 0)
   const totalLevel = entries.reduce((sum, e) => sum + e.level, 0)
   
-  // Average score: percentage of completed games that were passed
-  const completionRate = (totalGames / TOTAL_POSSIBLE_GAMES) * 100
+  // Completion: percentage of total possible game+level combinations completed
+  const completionPercent = Math.round((totalGames / totalPossibleGames) * 100)
   
-  // Weighted score: considers both completion and performance
-  // Each completed game contributes based on its normalized score and level
-  const maxPossibleWeightedScore = entries.reduce((sum, e) => sum + e.level, 0)
-  const actualWeightedScore = entries.reduce((sum, e) => {
-    const normalizedScore = e.maxScore ? (e.score / e.maxScore) : (e.score / 100)
-    return sum + (normalizedScore * e.level)
-  }, 0)
+  // Average score: mean score from all games played (0-100 scale)
+  const averageScore = Math.round(totalScore / totalGames)
   
-  // Scale to 100 considering total possible games
-  const weightedScore = (actualWeightedScore / maxPossibleWeightedScore) * completionRate
+  // Average level: mean difficulty level played
+  const averageLevel = Math.round((totalLevel / totalGames) * 10) / 10
+  
+  // Overall score: combines completion, performance, and difficulty
+  // = (completion %) × (avg score / 100) × (avg level / 10)
+  const overallScore = Math.round((completionPercent / 100) * (averageScore / 100) * (averageLevel / 10) * 100)
 
-  return {
-    totalGames,
-    averageScore: Math.round(completionRate),
-    averageLevel: Math.round((totalLevel / totalGames) * 10) / 10,
-    weightedScore: Math.round(weightedScore)
-  }
+  return { totalGames, completionPercent, averageScore, averageLevel, overallScore }
 }
 
 export default function LeaderBoard(): JSX.Element {
@@ -69,8 +41,8 @@ export default function LeaderBoard(): JSX.Element {
   const [userName, setUserName] = useState('')
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const TOTAL_GAMES = Object.keys(GAME_NAMES).length
-  const MAX_LEVEL = 10
+  const TOTAL_GAMES = getTotalGames()
+  const MAX_LEVEL = getMaxLevel()
   const TOTAL_POSSIBLE_COMPLETIONS = TOTAL_GAMES * MAX_LEVEL
 
   useEffect(() => {
@@ -142,25 +114,27 @@ export default function LeaderBoard(): JSX.Element {
     ctx.font = 'bold 22px Arial'
     ctx.fillText(`Overall Performance`, canvas.width / 2, 430)
     
+    // Main stats line
     ctx.font = '20px Arial'
-    ctx.fillText(`Games: ${stats.totalGames}/${TOTAL_POSSIBLE_COMPLETIONS} • Avg Level: ${stats.averageLevel}/${MAX_LEVEL} • Avg Score: ${stats.averageScore}%`, canvas.width / 2, 465)
-    ctx.fillText(`Weighted Score: ${stats.weightedScore}/100`, canvas.width / 2, 495)
+    ctx.fillText(`Completion: ${stats.completionPercent}% (${stats.totalGames}/${TOTAL_POSSIBLE_COMPLETIONS})`, canvas.width / 2, 465)
+    ctx.fillText(`Avg Score: ${stats.averageScore}/100 (from games played)`, canvas.width / 2, 490)
+    ctx.fillText(`Avg Level: ${stats.averageLevel}/${MAX_LEVEL} (difficulty played)`, canvas.width / 2, 515)
+    ctx.fillText(`Overall Score: ${stats.overallScore}/100 (combined metric)`, canvas.width / 2, 540)
 
     // Top achievements
     ctx.font = 'bold 20px Arial'
-    ctx.fillText('Top Achievements:', canvas.width / 2, 540)
+    ctx.fillText('Top Achievements:', canvas.width / 2, 575)
 
     // Leaderboard entries
     ctx.font = '18px Arial'
     ctx.textAlign = 'left'
-    let yPos = 575
+    let yPos = 610
     const maxEntries = Math.min(entries.length, 5)
     
     for (let i = 0; i < maxEntries; i++) {
       const entry = entries[i]
-      const gameName = GAME_NAMES[entry.gameId] ?? entry.gameId
-      const scoreText = entry.maxScore ? `${entry.score}/${entry.maxScore}` : `${entry.score}`
-      const text = `${i + 1}. ${gameName} - Level ${entry.level} - Score: ${scoreText}`
+      const gameName = getGameName(entry.gameId)
+      const text = `${i + 1}. ${gameName} - Level ${entry.level} - Score: ${entry.score}/100`
       ctx.fillText(text, 180, yPos)
       yPos += 32
     }
@@ -241,21 +215,24 @@ export default function LeaderBoard(): JSX.Element {
             <h4 className="font-semibold text-indigo-900 mb-2">Your Performance</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
               <div>
-                <div className="text-slate-600">Games Played</div>
-                <div className="text-xl font-bold text-indigo-600">{stats.totalGames}/{TOTAL_POSSIBLE_COMPLETIONS}</div>
-                <div className="text-xs text-slate-500">{TOTAL_GAMES} games × {MAX_LEVEL} levels</div>
+                <div className="text-slate-600">Completion</div>
+                <div className="text-xl font-bold text-indigo-600">{stats.completionPercent}%</div>
+                <div className="text-xs text-slate-500">{stats.totalGames}/{TOTAL_POSSIBLE_COMPLETIONS}</div>
+              </div>
+              <div>
+                <div className="text-slate-600">Avg Score</div>
+                <div className="text-xl font-bold text-indigo-600">{stats.averageScore}/100</div>
+                <div className="text-xs text-slate-500">From games played</div>
               </div>
               <div>
                 <div className="text-slate-600">Avg Level</div>
                 <div className="text-xl font-bold text-indigo-600">{stats.averageLevel}/10</div>
+                <div className="text-xs text-slate-500">Difficulty played</div>
               </div>
               <div>
-                <div className="text-slate-600">Avg Score</div>
-                <div className="text-xl font-bold text-indigo-600">{stats.averageScore}%</div>
-              </div>
-              <div>
-                <div className="text-slate-600">Weighted Score</div>
-                <div className="text-xl font-bold text-indigo-600">{stats.weightedScore}/100</div>
+                <div className="text-slate-600">Overall Score</div>
+                <div className="text-xl font-bold text-indigo-600">{stats.overallScore}/100</div>
+                <div className="text-xs text-slate-500">Combined metric</div>
               </div>
             </div>
           </div>
@@ -266,12 +243,12 @@ export default function LeaderBoard(): JSX.Element {
               {entries.map((e) => (
                 <li key={e.id} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-0">
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold truncate">{GAME_NAMES[e.gameId] ?? e.gameId} — Level {e.level}</div>
+                    <div className="font-semibold truncate">{getGameName(e.gameId)} — Level {e.level}</div>
                     <div className="text-sm text-slate-500">{new Date(e.when).toLocaleString()}</div>
                   </div>
                   <div className="text-right ml-4">
-                    <div className="text-lg font-bold">
-                      {e.maxScore ? `${e.score}/${e.maxScore}` : e.score}
+                    <div className="text-lg font-bold text-indigo-600">
+                      {e.score}/100
                     </div>
                   </div>
                 </li>

@@ -12,6 +12,20 @@ export type JugConfig = {
   timerSeconds?: number
 }
 
+// Optimal move counts for each level (calculated)
+const OPTIMAL_MOVES: Record<number, number> = {
+  1: 6,   // 3L, 5L → 4L
+  2: 8,   // 5L, 7L → 6L
+  3: 6,   // 3L, 7L → 5L
+  4: 10,  // 5L, 11L → 7L
+  5: 10,  // 7L, 13L → 5L
+  6: 6,   // 3L, 5L, 8L → 4L
+  7: 8,   // 5L, 7L, 11L → 9L
+  8: 8,   // 3L, 7L, 10L → 5L
+  9: 10,  // 4L, 9L, 13L → 6L
+  10: 12  // 5L, 8L, 13L → 11L
+}
+
 export const configForLevel = (level: number): JugConfig => {
   switch (level) {
     case 1:
@@ -83,7 +97,13 @@ const WaterJugs = ({ level }: WaterJugsProps): JSX.Element => {
   useEffect(() => {
     if (won && !saved.current) {
       const movesCount = moves.length
-      const score = Math.max(0, 100 - movesCount)
+      const optimalMoves = OPTIMAL_MOVES[level] || 6
+      
+      // Score based on efficiency: 100 for optimal, decreasing with extra moves
+      // Formula: max(50, 100 - (extra moves × 5))
+      const extraMoves = Math.max(0, movesCount - optimalMoves)
+      const score = Math.max(50, 100 - (extraMoves * 5))
+      
       import('../lib/progress').then(({ markGameCompletedLevel }) => {
         markGameCompletedLevel('water-jugs', level, score, 100)
       })

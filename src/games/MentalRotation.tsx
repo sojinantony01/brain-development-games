@@ -66,7 +66,8 @@ const MentalRotation = ({ level }: MentalRotationProps): JSX.Element => {
     if (newScore >= target) {
       if (!saved.current) {
         import('../lib/progress').then(({ markGameCompletedLevel }) => {
-          markGameCompletedLevel('mental-rotation', level, newScore, target)
+          const percentageScore = Math.min(100, Math.round((newScore / target) * 100))
+          markGameCompletedLevel('mental-rotation', level, percentageScore, 100)
         })
         saved.current = true
       }

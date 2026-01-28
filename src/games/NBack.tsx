@@ -84,7 +84,8 @@ const NBack = ({ level }: NBackProps): JSX.Element => {
   
   useEffect(() => {
     if (!saved.current && score >= target) {
-      markGameCompletedLevel('n-back', level, score, target)
+      const percentageScore = Math.min(100, Math.round((score / target) * 100))
+      markGameCompletedLevel('n-back', level, percentageScore, 100)
       saved.current = true
       setCompleted(true)
     }

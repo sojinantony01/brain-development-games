@@ -53,7 +53,8 @@ const WordScramble = ({ level }: WordScrambleProps): JSX.Element => {
       
       if (newScore >= target) {
         if (!saved.current) {
-          markGameCompletedLevel('word-scramble', level, newScore, target)
+          const percentageScore = Math.min(100, Math.round((newScore / target) * 100))
+          markGameCompletedLevel('word-scramble', level, percentageScore, 100)
           saved.current = true
         }
         setCompleted(true)

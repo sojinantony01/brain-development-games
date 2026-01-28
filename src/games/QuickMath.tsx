@@ -54,7 +54,8 @@ const QuickMath = ({ level }: QuickMathProps): JSX.Element => {
     else setScore((s) => Math.max(0, s - 1))
     // progress rule
     if (!saved.current && newScore >= target) {
-      markGameCompletedLevel('quick-math', level, newScore, target)
+      const percentageScore = Math.min(100, Math.round((newScore / target) * 100))
+      markGameCompletedLevel('quick-math', level, percentageScore, 100)
       saved.current = true
       setCompleted(true)
     }

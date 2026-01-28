@@ -106,7 +106,8 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
       if (newScore >= target) {
         // Completed all rounds!
         if (!saved.current) {
-          markGameCompletedLevel('simon-says', level, newScore, target)
+          const percentageScore = Math.min(100, Math.round((newScore / target) * 100))
+          markGameCompletedLevel('simon-says', level, percentageScore, 100)
           saved.current = true
         }
         setCompleted(true)

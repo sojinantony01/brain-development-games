@@ -83,7 +83,8 @@ const WorkingMemoryGrid = ({ level }: WorkingMemoryGridProps): JSX.Element => {
       if (newScore >= target) {
         // Completed all rounds!
         if (!saved.current) {
-          markGameCompletedLevel('working-memory-grid', level, newScore, target)
+          const percentageScore = Math.min(100, Math.round((newScore / target) * 100))
+          markGameCompletedLevel('working-memory-grid', level, percentageScore, 100)
           saved.current = true
         }
         setCompleted(true)

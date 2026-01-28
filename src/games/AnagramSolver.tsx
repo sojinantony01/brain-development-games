@@ -64,7 +64,8 @@ const AnagramSolver = ({ level }: AnagramSolverProps): JSX.Element => {
       
       if (newScore >= target) {
         if (!saved.current) {
-          markGameCompletedLevel('anagram-solver', level, newScore, target)
+          const percentageScore = Math.min(100, Math.round((newScore / target) * 100))
+          markGameCompletedLevel('anagram-solver', level, percentageScore, 100)
           saved.current = true
         }
         setCompleted(true)

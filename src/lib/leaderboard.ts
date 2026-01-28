@@ -2,8 +2,8 @@ export type LeaderboardEntry = {
   id: string
   gameId: string
   level: number
-  score: number
-  maxScore?: number
+  score: number // Always 0-100
+  maxScore?: number // Deprecated but kept for backward compatibility
   when: string
 }
 
@@ -31,18 +31,39 @@ const save = (entries: LeaderboardEntry[]): void => {
 
 export const getLeaderboard = (limit = 10): LeaderboardEntry[] => {
   const all = load()
-  return all.sort((a, b) => b.score - a.score).slice(0, limit)
+  // Sort by score (0-100), then by level if scores are equal
+  return all
+    .sort((a, b) => {
+      const scoreDiff = b.score - a.score
+      return scoreDiff !== 0 ? scoreDiff : b.level - a.level
+    })
+    .slice(0, limit)
 }
 
 export const addLeaderboardEntry = (entry: Omit<LeaderboardEntry, 'id' | 'when'>): void => {
   const all = load()
   
-  // Remove any existing entries for the same game and level (keep only the latest)
-  const filtered = all.filter(e => !(e.gameId === entry.gameId && e.level === entry.level))
+  // Find existing entry for same game+level
+  const existingIndex = all.findIndex(
+    e => e.gameId === entry.gameId && e.level === entry.level
+  )
   
-  const e: LeaderboardEntry = { ...entry, id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`, when: new Date().toISOString() }
-  filtered.push(e)
-  save(filtered)
+  // Keep only the best score
+  if (existingIndex !== -1) {
+    if (entry.score <= all[existingIndex].score) {
+      return // New score is not better, don't save
+    }
+    all.splice(existingIndex, 1) // Remove old score
+  }
+  
+  // Add new entry
+  const newEntry: LeaderboardEntry = {
+    ...entry,
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    when: new Date().toISOString()
+  }
+  all.push(newEntry)
+  save(all)
 }
 
 export const resetLeaderboard = (): void => {

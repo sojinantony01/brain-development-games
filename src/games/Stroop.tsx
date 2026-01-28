@@ -61,7 +61,8 @@ const Stroop = ({ level }: StroopProps): JSX.Element => {
 
   useEffect(() => {
     if (!saved.current && score >= target) {
-      markGameCompletedLevel('stroop', level, score, target)
+      const percentageScore = Math.min(100, Math.round((score / target) * 100))
+      markGameCompletedLevel('stroop', level, percentageScore, 100)
       saved.current = true
       setCompleted(true)
     }

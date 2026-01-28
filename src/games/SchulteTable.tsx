@@ -96,10 +96,8 @@ const SchulteTable = ({ level }: SchulteProps): JSX.Element => {
               key={n}
               onClick={() => clickNumber(n)}
               className={`aspect-square text-3xl font-black rounded-xl transition-all transform hover:scale-105 shadow-lg ${
-                n < next
+                n < next || (time !== null && n === total)
                   ? 'bg-gradient-to-br from-emerald-400 to-green-500 text-white scale-95 opacity-60'
-                  : n === next
-                  ? 'bg-gradient-to-br from-yellow-400 to-orange-400 text-white ring-4 ring-yellow-300 animate-pulse'
                   : 'bg-gradient-to-br from-blue-400 to-indigo-500 text-white hover:from-blue-500 hover:to-indigo-600'
               }`}
             >

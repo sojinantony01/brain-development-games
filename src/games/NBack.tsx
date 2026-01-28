@@ -7,8 +7,15 @@ export type NBackProps = {
   level: number
 }
 
-const randItem = (): string => {
-  const letters = 'ABCDEFGH'
+const randItem = (level: number): string => {
+  // Fewer letters for easier levels
+  const letterSets = [
+    'ABC',      // Level 1: 3 letters
+    'ABCD',     // Level 2: 4 letters
+    'ABCDE',    // Level 3: 5 letters
+    'ABCDEF',   // Level 4+: 6 letters
+  ]
+  const letters = letterSets[Math.min(level - 1, 3)] || 'ABCDEFGH'
   return letters[Math.floor(Math.random() * letters.length)]
 }
 
@@ -35,7 +42,7 @@ const NBack = ({ level }: NBackProps): JSX.Element => {
   }, [level])
 
   const step = (): void => {
-    setSequence((s) => [...s, randItem()])
+    setSequence((s) => [...s, randItem(level)])
     setIndex((i) => i + 1)
   }
 
@@ -45,7 +52,8 @@ const NBack = ({ level }: NBackProps): JSX.Element => {
     setScore(0)
     setRunning(true)
     step()
-    intervalRef.current = window.setInterval(step, Math.max(800 - level * 50, 300))
+    // Slower speed for easier levels: Level 1 = 1500ms, Level 2 = 1300ms, etc.
+    intervalRef.current = window.setInterval(step, Math.max(1500 - level * 200, 400))
   }
 
   const stop = (): void => {
@@ -62,7 +70,10 @@ const NBack = ({ level }: NBackProps): JSX.Element => {
     if (curIdx - n >= 0 && sequence[curIdx] === sequence[curIdx - n]) {
       setScore((s) => s + 1)
     } else {
-      setScore((s) => Math.max(0, s - 1))
+      // No penalty for early levels to encourage learning
+      if (level > 2) {
+        setScore((s) => Math.max(0, s - 1))
+      }
     }
   }
 

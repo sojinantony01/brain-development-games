@@ -21,6 +21,7 @@ import VisualSearchPage from './pages/games/VisualSearchPage'
 import AnagramSolverPage from './pages/games/AnagramSolverPage'
 import TrailMakingPage from './pages/games/TrailMakingPage'
 import WorkingMemoryGridPage from './pages/games/WorkingMemoryGridPage'
+import LogicPuzzlesPage from './pages/games/LogicPuzzlesPage'
 
 export default function App(): JSX.Element {
   return (
@@ -59,6 +60,7 @@ export default function App(): JSX.Element {
           <Route path="/games/anagram-solver" element={<AnagramSolverPage />} />
           <Route path="/games/trail-making" element={<TrailMakingPage />} />
           <Route path="/games/working-memory-grid" element={<WorkingMemoryGridPage />} />
+          <Route path="/games/logic-puzzles" element={<LogicPuzzlesPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

@@ -75,6 +75,7 @@ const VisualSearch = ({ level }: VisualSearchProps): JSX.Element => {
   }, [level])
 
   const handleItemClick = (item: Item): void => {
+    if (completed) return // Don't allow clicks after completion
     if (startTime === null) setStartTime(Date.now())
     if (found.has(item.id)) return
     
@@ -88,12 +89,16 @@ const VisualSearch = ({ level }: VisualSearchProps): JSX.Element => {
         const newScore = score + 1
         setScore(newScore)
         
-        if (!saved.current && newScore >= target) {
-          markGameCompletedLevel('visual-search', level, Math.round(10000 / time), target)
-          saved.current = true
+        if (newScore >= target) {
+          if (!saved.current) {
+            markGameCompletedLevel('visual-search', level, Math.round(10000 / time), target)
+            saved.current = true
+          }
           setCompleted(true)
+          return // Stop here, don't generate new items
         }
         
+        // Only generate new items if not completed
         setTimeout(() => {
           setGameData(generateItems(level))
           setFound(new Set())
@@ -138,9 +143,10 @@ const VisualSearch = ({ level }: VisualSearchProps): JSX.Element => {
           <button
             key={item.id}
             onClick={() => handleItemClick(item)}
+            disabled={completed}
             className={`text-4xl p-2 rounded-lg transition-all transform ${item.color} ${
               found.has(item.id) ? 'opacity-20 scale-50 bg-green-100' : 'hover:scale-150 hover:rotate-12 hover:shadow-lg'
-            }`}
+            } ${completed ? 'cursor-not-allowed opacity-50' : ''}`}
           >
             {item.shape}
           </button>

@@ -56,16 +56,22 @@ const AnagramSolver = ({ level }: AnagramSolverProps): JSX.Element => {
   }
 
   const handleSubmit = (): void => {
+    if (completed) return // Don't allow submissions after completion
+    
     if (input.toLowerCase() === word.toLowerCase()) {
       const newScore = score + 1
       setScore(newScore)
       
-      if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('anagram-solver', level, newScore, target)
-        saved.current = true
+      if (newScore >= target) {
+        if (!saved.current) {
+          markGameCompletedLevel('anagram-solver', level, newScore, target)
+          saved.current = true
+        }
         setCompleted(true)
+        return // Stop here, don't pick new word
       }
       
+      // Only pick new word if not completed
       pickNewWord()
     } else {
       setInput('')
@@ -105,14 +111,14 @@ const AnagramSolver = ({ level }: AnagramSolverProps): JSX.Element => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-          className="border-4 border-orange-300 p-4 rounded-xl text-2xl font-bold text-center flex-1 focus:border-orange-500 focus:outline-none shadow-lg"
+          className="border-4 border-orange-300 p-4 rounded-xl text-2xl font-bold text-center flex-1 focus:border-orange-500 focus:outline-none shadow-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
           placeholder="Type your answer..."
-          disabled={timeLeft === 0}
+          disabled={timeLeft === 0 || completed}
         />
         <button
           onClick={handleSubmit}
-          disabled={timeLeft === 0}
-          className="px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white text-2xl font-bold rounded-xl hover:from-orange-600 hover:to-amber-700 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={timeLeft === 0 || completed}
+          className="px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white text-2xl font-bold rounded-xl hover:from-orange-600 hover:to-amber-700 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
           ✓ Submit
         </button>
@@ -120,7 +126,8 @@ const AnagramSolver = ({ level }: AnagramSolverProps): JSX.Element => {
 
       <button
         onClick={pickNewWord}
-        className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xl font-bold rounded-xl hover:from-yellow-500 hover:to-orange-500 shadow-lg transform hover:scale-105 transition-all"
+        disabled={completed}
+        className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xl font-bold rounded-xl hover:from-yellow-500 hover:to-orange-500 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
       >
         ⏭️ Skip
       </button>

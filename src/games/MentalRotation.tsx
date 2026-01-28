@@ -56,17 +56,25 @@ const MentalRotation = ({ level }: MentalRotationProps): JSX.Element => {
   }
 
   const answer = (isSame: boolean): void => {
+    if (completed) return // Don't allow answers after completion
+    
     setAttempts((a) => a + 1)
     const newScore = score + (isSame === pair.same ? 1 : 0)
     if (isSame === pair.same) setScore((s) => s + 1)
-    // simple rule: persist when score reaches threshold
-    if (!saved.current && newScore >= target) {
-      import('../lib/progress').then(({ markGameCompletedLevel }) => {
-        markGameCompletedLevel('mental-rotation', level, newScore, target)
-      })
-      saved.current = true
+    
+    // Check if target reached
+    if (newScore >= target) {
+      if (!saved.current) {
+        import('../lib/progress').then(({ markGameCompletedLevel }) => {
+          markGameCompletedLevel('mental-rotation', level, newScore, target)
+        })
+        saved.current = true
+      }
       setCompleted(true)
+      return // Stop here, don't generate new pair
     }
+    
+    // Only generate new pair if not completed
     respawn()
   }
 
@@ -104,13 +112,15 @@ const MentalRotation = ({ level }: MentalRotationProps): JSX.Element => {
         <div className="flex gap-4 justify-center mb-6">
           <button
             onClick={() => answer(true)}
-            className="px-12 py-6 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+            disabled={completed}
+            className="px-12 py-6 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             ✅ Same
           </button>
           <button
             onClick={() => answer(false)}
-            className="px-12 py-6 bg-gradient-to-r from-red-400 to-pink-500 text-white text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+            disabled={completed}
+            className="px-12 py-6 bg-gradient-to-r from-red-400 to-pink-500 text-white text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             ❌ Different
           </button>

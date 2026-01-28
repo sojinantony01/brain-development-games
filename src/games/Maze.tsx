@@ -14,32 +14,102 @@ const makeEmptyGrid = (w: number, h: number): number[][] => {
   return Array.from({ length: h }, () => Array.from({ length: w }, () => 1))
 }
 
-// very simple randomized maze generator (recursive division is overkill; we'll generate a simple path)
-const generateMaze = (w: number, h: number): { grid: number[][]; start: [number, number]; end: [number, number] } => {
+// BFS to find shortest path length
+const findShortestPath = (grid: number[][], start: [number, number], end: [number, number]): number => {
+  const h = grid.length
+  const w = grid[0].length
+  const visited = Array.from({ length: h }, () => Array(w).fill(false))
+  const queue: Array<[number, number, number]> = [[start[0], start[1], 0]]
+  visited[start[1]][start[0]] = true
+  
+  const dirs = [[1, 0], [0, 1], [-1, 0], [0, -1]]
+  
+  while (queue.length > 0) {
+    const [x, y, dist] = queue.shift()!
+    
+    if (x === end[0] && y === end[1]) {
+      return dist
+    }
+    
+    for (const [dx, dy] of dirs) {
+      const nx = x + dx
+      const ny = y + dy
+      
+      if (nx >= 0 && nx < w && ny >= 0 && ny < h && !visited[ny][nx] && grid[ny][nx] === 0) {
+        visited[ny][nx] = true
+        queue.push([nx, ny, dist + 1])
+      }
+    }
+  }
+  
+  return -1 // No path found
+}
+
+// Recursive backtracking maze generator - creates a proper maze with dead ends
+const generateMaze = (w: number, h: number): { grid: number[][]; start: [number, number]; end: [number, number]; optimalMoves: number } => {
   const grid = makeEmptyGrid(w, h)
-  // Carve a single path from left-top to right-bottom
-  let x = 0
-  let y = 0
-  grid[y][x] = 0
-  while (x < w - 1 || y < h - 1) {
-    if (x < w - 1 && Math.random() > 0.5) x++
-    else if (y < h - 1) y++
-    else x++
+  const visited: boolean[][] = Array.from({ length: h }, () => Array(w).fill(false))
+  
+  // Directions: right, down, left, up
+  const dirs = [[1, 0], [0, 1], [-1, 0], [0, -1]]
+  
+  const carve = (x: number, y: number): void => {
+    visited[y][x] = true
+    grid[y][x] = 0
+    
+    // Shuffle directions for randomness
+    const shuffled = dirs.sort(() => Math.random() - 0.5)
+    
+    for (const [dx, dy] of shuffled) {
+      const nx = x + dx
+      const ny = y + dy
+      
+      if (nx >= 0 && nx < w && ny >= 0 && ny < h && !visited[ny][nx]) {
+        carve(nx, ny)
+      }
+    }
+  }
+  
+  // Start carving from top-left
+  carve(0, 0)
+  
+  // Ensure there's always a path by carving additional connections
+  // This adds some loops to make the maze less linear
+  for (let i = 0; i < Math.floor(w * h * 0.1); i++) {
+    const x = Math.floor(Math.random() * w)
+    const y = Math.floor(Math.random() * h)
     grid[y][x] = 0
   }
-  return { grid, start: [0, 0], end: [w - 1, h - 1] }
+  
+  const start: [number, number] = [0, 0]
+  const end: [number, number] = [w - 1, h - 1]
+  const optimalMoves = findShortestPath(grid, start, end)
+  
+  return { grid, start, end, optimalMoves }
 }
 
 const Maze = ({ level }: MazeProps): JSX.Element => {
   const size = Math.min(6 + Math.floor((level - 1) / 2), 12)
-  const { grid: initialGrid, start, end } = useMemo(() => generateMaze(size, size), [size])
+  const [resetCount, setResetCount] = useState<number>(0)
+  
+  // Generate new maze on each reset by including resetCount in dependency
+  const { grid: initialGrid, start, end, optimalMoves } = useMemo(() => generateMaze(size, size), [size, resetCount])
+  
   const [grid, setGrid] = useState<number[][]>(initialGrid)
   const [pos, setPos] = useState<[number, number]>(start)
   const [moves, setMoves] = useState(0)
   const [won, setWon] = useState(false)
-  const [resetCount, setResetCount] = useState<number>(0)
   const [fog, setFog] = useState(level >= 7)
   const [dynamic, setDynamic] = useState(level >= 9)
+  
+  // Calculate star rating based on efficiency
+  const getStars = (moves: number, optimal: number): number => {
+    if (moves <= optimal) return 3
+    if (moves <= optimal * 1.5) return 2
+    return 1
+  }
+  
+  const stars = won ? getStars(moves, optimalMoves) : 0
 
   useEffect(() => {
     setGrid(initialGrid)
@@ -81,7 +151,9 @@ const Maze = ({ level }: MazeProps): JSX.Element => {
     setMoves((m) => m + 1)
     if (nx === end[0] && ny === end[1]) {
       setWon(true)
-      markGameCompletedLevel('maze', level, Math.max(0, 100 - moves), 100)
+      // Score based on efficiency: 100 points for optimal, decreasing with extra moves
+      const efficiency = Math.max(0, Math.min(100, Math.round((optimalMoves / moves) * 100)))
+      markGameCompletedLevel('maze', level, efficiency, 100)
     }
   }
 
@@ -97,12 +169,30 @@ const Maze = ({ level }: MazeProps): JSX.Element => {
           <p className="text-lg text-slate-600 mt-2">Find your way to the treasure! 🏆</p>
         </div>
 
-        <div className="mb-6 text-center">
+        <div className="mb-6 text-center flex gap-4 justify-center items-center">
           <div className="inline-block bg-white px-8 py-4 rounded-xl shadow-md">
             <span className="text-2xl font-bold text-green-700">🚶 Moves: </span>
             <span className="text-4xl font-black text-blue-600">{moves}</span>
           </div>
+          <div className="inline-block bg-white px-8 py-4 rounded-xl shadow-md">
+            <span className="text-2xl font-bold text-amber-600">🎯 Optimal: </span>
+            <span className="text-4xl font-black text-amber-600">{optimalMoves}</span>
+          </div>
         </div>
+        
+        {moves > 0 && !won && (
+          <div className="mb-4 text-center">
+            <div className={`inline-block px-6 py-3 rounded-xl font-bold text-lg ${
+              moves <= optimalMoves ? 'bg-green-100 text-green-700' :
+              moves <= optimalMoves * 1.5 ? 'bg-yellow-100 text-yellow-700' :
+              'bg-orange-100 text-orange-700'
+            }`}>
+              {moves <= optimalMoves ? '⭐⭐⭐ Perfect Path!' :
+               moves <= optimalMoves * 1.5 ? '⭐⭐ Good Progress!' :
+               '⭐ Keep Exploring!'}
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-center mb-6">
           <div className="inline-block bg-white p-6 rounded-2xl shadow-lg border-4 border-green-300">
@@ -178,7 +268,21 @@ const Maze = ({ level }: MazeProps): JSX.Element => {
         {won && (
           <div className="mt-6 p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-4 border-emerald-300">
             <div className="text-3xl font-bold text-center mb-2">🎉 You Found the Treasure! 🎉</div>
-            <div className="text-xl text-center mb-4">Completed in <span className="font-bold text-2xl">{moves}</span> moves!</div>
+            <div className="text-center mb-4">
+              <div className="text-5xl mb-2">
+                {stars === 3 ? '⭐⭐⭐' : stars === 2 ? '⭐⭐' : '⭐'}
+              </div>
+              <div className="text-xl">
+                Completed in <span className="font-bold text-2xl text-blue-600">{moves}</span> moves
+              </div>
+              <div className="text-lg mt-1">
+                Optimal: <span className="font-bold text-amber-600">{optimalMoves}</span> moves
+                {moves === optimalMoves && <span className="ml-2 text-green-600 font-bold">🏆 PERFECT!</span>}
+              </div>
+              <div className="text-md mt-2 font-semibold">
+                Efficiency: <span className="text-2xl">{Math.round((optimalMoves / moves) * 100)}%</span>
+              </div>
+            </div>
             <div className="flex justify-center">
               <NextLevelButton currentLevel={level} />
             </div>

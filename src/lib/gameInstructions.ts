@@ -247,6 +247,23 @@ export const GAME_INSTRUCTIONS: Record<string, GameInstructions> = {
       'Consider multiple operations (add then multiply)'
     ]
   },
+  'logic-puzzles': {
+    title: 'Logic Puzzles',
+    instructions: [
+      'Read each puzzle carefully and understand the problem',
+      'Use logical reasoning and mathematical thinking to solve',
+      'Enter your numerical answer in the input field',
+      'Click "Show Hint" if you need help (available after first attempt)',
+      'Each puzzle has a unique solution - think step by step',
+      'Higher levels have more complex puzzles requiring deeper analysis'
+    ],
+    tips: [
+      'Work backwards from the end result when possible',
+      'Write down intermediate steps to track your thinking',
+      'Look for patterns in sequences and operations',
+      'Don\'t rush - take time to understand the problem fully'
+    ]
+  },
   'dual-task': {
     title: 'Dual Task Challenge',
     instructions: [

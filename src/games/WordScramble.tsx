@@ -45,14 +45,22 @@ const WordScramble = ({ level }: WordScrambleProps): JSX.Element => {
   }
 
   const submitGuess = (): void => {
+    if (completed) return // Don't allow submissions after completion
+    
     if (input.toLowerCase() === word.toLowerCase()) {
       const newScore = score + 1
-      setScore((s) => s + 1)
-      if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('word-scramble', level, newScore, target)
-        saved.current = true
+      setScore(newScore)
+      
+      if (newScore >= target) {
+        if (!saved.current) {
+          markGameCompletedLevel('word-scramble', level, newScore, target)
+          saved.current = true
+        }
         setCompleted(true)
+        return // Stop here, don't pick new word
       }
+      
+      // Only pick new word if not completed
       pick()
     } else {
       setScore((s) => Math.max(0, s - 1))
@@ -73,15 +81,17 @@ const WordScramble = ({ level }: WordScrambleProps): JSX.Element => {
       </div>
       <div className="flex gap-4 items-center justify-center mb-6">
         <input
-          className="border-4 border-teal-300 p-4 rounded-xl text-2xl font-bold text-center flex-1 max-w-md focus:border-teal-500 focus:outline-none shadow-lg"
+          className="border-4 border-teal-300 p-4 rounded-xl text-2xl font-bold text-center flex-1 max-w-md focus:border-teal-500 focus:outline-none shadow-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && submitGuess()}
           placeholder="Type your answer..."
+          disabled={completed}
         />
         <button
           onClick={submitGuess}
-          className="px-8 py-4 bg-gradient-to-r from-green-500 to-teal-600 text-white text-2xl font-bold rounded-xl hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all"
+          disabled={completed}
+          className="px-8 py-4 bg-gradient-to-r from-green-500 to-teal-600 text-white text-2xl font-bold rounded-xl hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
         >
           ✓ Submit
         </button>

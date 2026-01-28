@@ -13,6 +13,7 @@ const GAMES: GameMeta[] = [
   { id: 'tower-of-hanoi', name: 'Tower of Hanoi', description: 'Move disks between pegs following specific rules. Classic recursive thinking and strategic planning exercise.' },
   { id: 'ball-sort', name: 'Ball Sort Puzzle', description: 'Sort colored balls into tubes so each tube contains only one color. Develops logical thinking and planning skills.' },
   { id: 'n-back', name: 'N-Back', description: 'Remember and match items from N steps back in a sequence. Scientifically proven to enhance working memory capacity.' },
+  { id: 'logic-puzzles', name: 'Logic Puzzles', description: 'Solve challenging logic and math puzzles that require step-by-step reasoning. Develops analytical thinking and problem-solving skills.' },
   { id: 'stroop', name: 'Stroop Test', description: 'Name the color of words while ignoring their meaning. Trains cognitive control and selective attention.' },
   { id: 'mental-rotation', name: 'Mental Rotation', description: 'Identify if rotated shapes match the original. Develops spatial reasoning and visualization abilities.' },
   { id: 'schulte-table', name: 'Schulte Table', description: 'Find numbers in sequence as fast as possible. Improves peripheral vision, focus, and reading speed.' },
@@ -56,11 +57,15 @@ export default function Home(): JSX.Element {
 
   return (
     <div className="space-y-8">
-      <section className="bg-white p-8 rounded shadow">
+      {/* Hero Section */}
+      <section className="bg-white p-8 rounded shadow" aria-label="Game selection">
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-4">Brain Development Games</h2>
-            <p className="mb-4">Play a collection of 19 cognitive games designed to improve memory, planning, attention, and problem-solving skills.</p>
+            <h1 className="text-3xl font-bold mb-4 text-slate-900">Brain Development Games</h1>
+            <p className="mb-4 text-lg text-slate-700">
+              Play a collection of <strong>21 cognitive training games</strong> designed to improve <strong>memory</strong>, <strong>planning</strong>, <strong>attention</strong>, and <strong>problem-solving skills</strong>.
+              Each game offers 10 progressive difficulty levels to challenge and enhance your cognitive abilities.
+            </p>
 
             <div className="flex gap-4">
               <select
@@ -91,14 +96,34 @@ export default function Home(): JSX.Element {
         </div>
       </section>
 
+      {/* Benefits Section */}
+      <section className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg shadow">
+        <h2 className="text-2xl font-bold mb-4 text-slate-900">Why Play Brain Training Games?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white p-4 rounded shadow-sm">
+            <h3 className="font-semibold text-lg mb-2 text-indigo-700">🧠 Improve Memory</h3>
+            <p className="text-slate-600">Enhance working memory, visual memory, and sequential recall through scientifically-designed exercises.</p>
+          </div>
+          <div className="bg-white p-4 rounded shadow-sm">
+            <h3 className="font-semibold text-lg mb-2 text-purple-700">⚡ Boost Attention</h3>
+            <p className="text-slate-600">Train selective attention, focus, and cognitive control with engaging challenges.</p>
+          </div>
+          <div className="bg-white p-4 rounded shadow-sm">
+            <h3 className="font-semibold text-lg mb-2 text-pink-700">🎯 Enhance Problem-Solving</h3>
+            <p className="text-slate-600">Develop logical reasoning, strategic planning, and analytical thinking skills.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Games List Section */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-4">
+        <div className="space-y-4" role="list" aria-label="Available brain training games">
           {GAMES.map((g) => (
-            <article key={g.id} className="bg-white p-6 rounded shadow">
+            <article key={g.id} className="bg-white p-6 rounded shadow hover:shadow-lg transition-shadow" role="listitem">
               <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-bold text-lg">{g.name}</h3>
-                  <p className="text-slate-600">{g.description}</p>
+                <div className="flex-1">
+                  <h3 className="font-bold text-xl text-slate-900 mb-2">{g.name}</h3>
+                  <p className="text-slate-600 leading-relaxed">{g.description}</p>
                 </div>
 
                 <div>
@@ -122,12 +147,11 @@ export default function Home(): JSX.Element {
           ))}
         </div>
 
-        <aside>
-          {/* Leaderboard */}
+        <aside aria-label="Leaderboard and progress tracking">
           <div className="sticky top-6">
+            <h2 className="text-2xl font-bold mb-4 text-slate-900">Leaderboard</h2>
             <div className="mb-4">
-              {/* lazy load component to keep bundle small */}
-              <React.Suspense fallback={<div>Loading leaderboard…</div>}>
+              <React.Suspense fallback={<div className="text-slate-500">Loading leaderboard…</div>}>
                 <LeaderboardComponent />
               </React.Suspense>
             </div>

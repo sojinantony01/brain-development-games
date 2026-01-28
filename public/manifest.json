@@ -1,0 +1,22 @@
+{
+  "name": "Brain Development Games - Cognitive Training",
+  "short_name": "Brain Games",
+  "description": "21 free cognitive training games to improve memory, attention, and problem-solving skills",
+  "start_url": "/brain-development-games/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/brain-development-games/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["games", "education", "health"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "scope": "/brain-development-games/",
+  "screenshots": []
+}

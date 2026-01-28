@@ -106,9 +106,6 @@ const NumberSequence = ({ level }: NumberSequenceProps): JSX.Element => {
           <div className="bg-white px-8 py-4 rounded-xl shadow-md">
             <span className="text-indigo-600">🎯 Score:</span> <span className="text-3xl text-indigo-700">{score}/{target}</span>
           </div>
-          <div className="bg-white px-8 py-4 rounded-xl shadow-md">
-            <span className="text-purple-600">🧩 Pattern:</span> <span className="text-2xl text-purple-700 capitalize">{sequence.type}</span>
-          </div>
         </div>
 
         <div className="mb-8 bg-white p-6 rounded-2xl shadow-lg">

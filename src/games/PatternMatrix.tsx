@@ -22,10 +22,11 @@ const PatternMatrix = ({ level }: PatternMatrixProps): JSX.Element => {
   const [phase, setPhase] = useState<'show' | 'recreate' | 'done'>('show')
   const [score, setScore] = useState(0)
   const [completed, setCompleted] = useState(false)
+  const [roundNumber, setRoundNumber] = useState(1)
   const saved = useRef(false)
   const target = Math.max(3, Math.ceil(level / 2))
 
-  useEffect(() => {
+  const generateNewPattern = (): void => {
     // choose k squares to flash
     const k = Math.min(3 + Math.floor(level / 2), Math.floor(total / 2))
     const indices = new Set<number>()
@@ -33,11 +34,15 @@ const PatternMatrix = ({ level }: PatternMatrixProps): JSX.Element => {
     setPattern(Array.from(indices))
     setPhase('show')
     setAttempt(new Set())
+    const t = setTimeout(() => setPhase('recreate'), Math.max(800, 1200 - level * 80))
+  }
+
+  useEffect(() => {
     setScore(0)
     setCompleted(false)
+    setRoundNumber(1)
     saved.current = false
-    const t = setTimeout(() => setPhase('recreate'), Math.max(800, 1200 - level * 80))
-    return () => clearTimeout(t)
+    generateNewPattern()
   }, [level, size, total])
 
   const toggle = (idx: number): void => {
@@ -46,17 +51,35 @@ const PatternMatrix = ({ level }: PatternMatrixProps): JSX.Element => {
   }
 
   const submit = (): void => {
+    if (phase !== 'recreate') return
+    
     const match = pattern.length === attempt.size && pattern.every((p) => attempt.has(p))
+    
     if (match) {
       const newScore = score + 1
-      setScore((s) => s + 1)
-      if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('pattern-matrix', level, newScore, target)
-        saved.current = true
+      setScore(newScore)
+      
+      if (newScore >= target) {
+        // Completed all rounds!
+        if (!saved.current) {
+          markGameCompletedLevel('pattern-matrix', level, newScore, target)
+          saved.current = true
+        }
         setCompleted(true)
+        setPhase('done')
+      } else {
+        // Generate next pattern for next round
+        setRoundNumber((r) => r + 1)
+        generateNewPattern()
       }
+    } else {
+      // Wrong answer - show feedback and allow retry
+      setPhase('done')
+      setTimeout(() => {
+        setPhase('show')
+        setTimeout(() => setPhase('recreate'), Math.max(800, 1200 - level * 80))
+      }, 1000)
     }
-    setPhase('done')
   }
 
   return (
@@ -87,17 +110,39 @@ const PatternMatrix = ({ level }: PatternMatrixProps): JSX.Element => {
       </div>
 
       <div className="flex gap-4 justify-center mb-4">
-        <button onClick={() => { setPhase('show'); setTimeout(() => setPhase('recreate'), 800) }} className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xl font-bold rounded-xl hover:from-yellow-500 hover:to-orange-500 shadow-lg transform hover:scale-105 transition-all">
+        <button
+          onClick={() => {
+            setPhase('show')
+            setTimeout(() => setPhase('recreate'), Math.max(800, 1200 - level * 80))
+          }}
+          className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xl font-bold rounded-xl hover:from-yellow-500 hover:to-orange-500 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={phase !== 'recreate'}
+        >
           🔄 Replay
         </button>
-        <button onClick={submit} className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xl font-bold rounded-xl hover:from-indigo-600 hover:to-purple-700 shadow-lg transform hover:scale-105 transition-all">
+        <button
+          onClick={submit}
+          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xl font-bold rounded-xl hover:from-indigo-600 hover:to-purple-700 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={phase !== 'recreate'}
+        >
           ✓ Submit
         </button>
       </div>
 
-      <div className="text-2xl font-bold text-center text-indigo-600 bg-white/70 p-4 rounded-xl backdrop-blur">
-        Score: {score} / {target}
+      <div className="space-y-3">
+        <div className="text-2xl font-bold text-center text-indigo-600 bg-white/70 p-4 rounded-xl backdrop-blur">
+          Round: {roundNumber} / {target}
+        </div>
+        <div className="text-2xl font-bold text-center text-purple-600 bg-white/70 p-4 rounded-xl backdrop-blur">
+          Score: {score} / {target}
+        </div>
       </div>
+      
+      {phase === 'done' && !completed && (
+        <div className="mt-4 p-4 bg-red-100 border-2 border-red-400 rounded-xl text-center">
+          <p className="text-lg font-bold text-red-700">❌ Incorrect! Try again...</p>
+        </div>
+      )}
       
       {completed && (
         <div className="mt-6 p-6 bg-gradient-to-r from-green-100 to-emerald-100 text-emerald-800 rounded-xl border-4 border-green-400 shadow-lg">

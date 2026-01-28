@@ -22,6 +22,7 @@ const GAME_NAMES: Record<string, string> = {
   'anagram-solver': 'Anagram Solver',
   'trail-making': 'Trail Making',
   'working-memory-grid': 'Working Memory Grid',
+  'logic-puzzles': 'Logic Puzzles',
 }
 
 type Statistics = {

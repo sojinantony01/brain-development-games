@@ -24,7 +24,9 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isPlayerTurn, setIsPlayerTurn] = useState(false)
   const [score, setScore] = useState(0)
+  const [roundNumber, setRoundNumber] = useState(0)
   const [activeColor, setActiveColor] = useState<Color | null>(null)
+  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null)
   const [completed, setCompleted] = useState(false)
   const saved = useRef(false)
   
@@ -36,8 +38,10 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
     setSequence([])
     setPlayerSequence([])
     setScore(0)
+    setRoundNumber(0)
     setIsPlaying(false)
     setIsPlayerTurn(false)
+    setFeedback(null)
     setCompleted(false)
     saved.current = false
   }, [level])
@@ -51,6 +55,8 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
     setPlayerSequence([])
     setIsPlaying(true)
     setIsPlayerTurn(false)
+    setFeedback(null)
+    setRoundNumber(r => r + 1)
     playSequence(newSequence)
   }
 
@@ -78,13 +84,14 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
     // Check if correct
     const currentIndex = newPlayerSequence.length - 1
     if (newPlayerSequence[currentIndex] !== sequence[currentIndex]) {
-      // Wrong! Reset
+      // Wrong! Show feedback and replay same sequence
       setIsPlayerTurn(false)
       setPlayerSequence([])
+      setFeedback('wrong')
       setTimeout(() => {
-        alert('Wrong sequence! Try again.')
-        setIsPlayerTurn(true)
-      }, 300)
+        setFeedback(null)
+        playSequence(sequence)
+      }, 1500)
       return
     }
 
@@ -94,17 +101,21 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
       setScore(newScore)
       setIsPlayerTurn(false)
       setPlayerSequence([])
+      setFeedback('correct')
       
-      if (!saved.current && newScore >= target) {
-        markGameCompletedLevel('simon-says', level, newScore, target)
-        saved.current = true
+      if (newScore >= target) {
+        // Completed all rounds!
+        if (!saved.current) {
+          markGameCompletedLevel('simon-says', level, newScore, target)
+          saved.current = true
+        }
         setCompleted(true)
+      } else {
+        // Start next round with NEW sequence
+        setTimeout(() => {
+          startGame()
+        }, 1500)
       }
-      
-      setTimeout(() => {
-        alert('Correct! Starting next round...')
-        startGame()
-      }, 500)
     }
   }
 
@@ -117,10 +128,15 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
       </h2>
       <p className="text-xl text-slate-700 mb-6 font-semibold">Watch the sequence and repeat it!</p>
 
-      <div className="mb-6 text-xl font-bold text-center bg-white/70 p-4 rounded-xl backdrop-blur">
-        <span className="text-purple-600">Length: {sequenceLength}</span> •
-        <span className="text-blue-600 ml-2">Speed: {playbackSpeed}ms</span> •
-        <span className="text-green-600 ml-2">Score: {score} / {target}</span>
+      <div className="mb-6 space-y-3">
+        <div className="text-2xl font-bold text-center bg-white/70 p-4 rounded-xl backdrop-blur">
+          <span className="text-purple-600">Round: {roundNumber} / {target}</span> •
+          <span className="text-green-600 ml-2">Score: {score} / {target}</span>
+        </div>
+        <div className="text-xl font-bold text-center bg-white/70 p-3 rounded-xl backdrop-blur">
+          <span className="text-blue-600">Length: {sequenceLength}</span> •
+          <span className="text-indigo-600 ml-2">Speed: {playbackSpeed}ms</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-6 mb-8 max-w-lg mx-auto">
@@ -160,10 +176,21 @@ export default function SimonSays({ level }: SimonSaysProps): JSX.Element {
         </div>
       )}
 
+      {feedback && (
+        <div className={`text-center text-2xl font-bold mb-4 px-6 py-3 rounded-xl inline-block ${
+          feedback === 'correct' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+        }`}>
+          {feedback === 'correct' ? '✅ Perfect! Next round...' : '❌ Wrong! Watch again...'}
+        </div>
+      )}
+
       {completed && (
         <div className="mt-6 p-6 bg-gradient-to-r from-green-100 to-emerald-100 text-emerald-800 rounded-xl border-4 border-green-400 shadow-lg">
-          <div className="text-3xl font-bold mb-2">✅ Level {level} completed!</div>
-          <div className="mt-4">
+          <div className="text-3xl font-bold mb-2 text-center">🎉 Perfect Memory! Level {level} Complete! 🎉</div>
+          <div className="text-xl text-center mb-4">
+            Completed {target} sequences successfully!
+          </div>
+          <div className="flex justify-center">
             <NextLevelButton currentLevel={level} />
           </div>
         </div>

@@ -136,8 +136,6 @@ const TrailMaking = ({ level }: TrailMakingProps): JSX.Element => {
                     className={`absolute w-16 h-16 rounded-full flex items-center justify-center text-2xl font-black transform -translate-x-1/2 -translate-y-1/2 transition-all shadow-lg ${
                       node.connected
                         ? 'bg-gradient-to-br from-emerald-400 to-green-500 text-white scale-90'
-                        : node.id === currentIndex
-                        ? 'bg-gradient-to-br from-yellow-400 to-orange-400 text-white ring-4 ring-yellow-300 animate-pulse scale-110'
                         : 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white hover:scale-125 hover:ring-4 hover:ring-indigo-300'
                     }`}
                   >
@@ -155,8 +153,6 @@ const TrailMaking = ({ level }: TrailMakingProps): JSX.Element => {
                 className={`absolute w-16 h-16 rounded-full flex items-center justify-center text-2xl font-black transform -translate-x-1/2 -translate-y-1/2 transition-all shadow-lg ${
                   node.connected
                     ? 'bg-gradient-to-br from-emerald-400 to-green-500 text-white scale-90'
-                    : node.id === currentIndex
-                    ? 'bg-gradient-to-br from-yellow-400 to-orange-400 text-white ring-4 ring-yellow-300 animate-pulse scale-110'
                     : 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white hover:scale-125 hover:ring-4 hover:ring-indigo-300'
                 }`}
               >

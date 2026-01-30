@@ -26,18 +26,18 @@ import LogicPuzzlesPage from './pages/games/LogicPuzzlesPage'
 export default function App(): JSX.Element {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-indigo-600 text-white p-4">
+      <header className="bg-indigo-600 text-white p-3 sm:p-4">
         <nav className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold">Brain Development Games</h1>
-          <div className="space-x-4">
-            <Link to="/" className="underline">
+          <h1 className="text-base sm:text-lg lg:text-xl font-bold">Brain Development Games</h1>
+          <div className="space-x-2 sm:space-x-4">
+            <Link to="/" className="underline text-sm sm:text-base hover:text-indigo-200">
               Home
             </Link>
           </div>
         </nav>
       </header>
 
-      <main className="flex-1 container mx-auto p-6">
+      <main className="flex-1 container mx-auto p-3 sm:p-4 lg:p-6">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/games/water-jugs" element={<WaterJugsPage />} />
@@ -65,9 +65,11 @@ export default function App(): JSX.Element {
         </Routes>
       </main>
 
-      <footer className="bg-slate-200 text-slate-700 p-4 text-center">
-        © Brain Development Games — <a href="https://sojinantony01.github.io/brain-development-games" className="underline">Live demo</a>
-        <div className="text-sm mt-1">By - Sojin Antony</div>
+      <footer className="bg-slate-200 text-slate-700 p-3 sm:p-4 text-center">
+        <div className="text-xs sm:text-sm">
+          © Brain Development Games — <a href="https://sojinantony01.github.io/brain-development-games" className="underline hover:text-indigo-600">Live demo</a>
+        </div>
+        <div className="text-xs sm:text-sm mt-1">By - Sojin Antony</div>
       </footer>
     </div>
   )

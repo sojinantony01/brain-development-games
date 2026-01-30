@@ -9,6 +9,67 @@ body {
   color: rgb(15 23 42);
 }
 
+/* Responsive container utilities */
+.container {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Responsive text utilities */
+.responsive-text-sm {
+  font-size: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-text-sm {
+    font-size: 1rem;
+  }
+}
+
+.responsive-text-base {
+  font-size: 1rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-text-base {
+    font-size: 1.125rem;
+  }
+}
+
+/* Game container responsive utilities */
+.game-container {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .game-container {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .game-container {
+    padding: 2rem;
+  }
+}
+
 /* Celebration Animations */
 @keyframes confetti {
   0% {

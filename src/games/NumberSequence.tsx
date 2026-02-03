@@ -126,19 +126,19 @@ const NumberSequence = ({ level }: NumberSequenceProps): JSX.Element => {
           </div>
         </div>
 
-        <div className="flex gap-4 items-center mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center mb-6">
           <input
             type="number"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-            className="border-4 border-indigo-400 p-4 rounded-xl flex-1 text-3xl font-bold text-center focus:ring-4 focus:ring-indigo-300 focus:outline-none shadow-lg"
+            className="border-4 border-indigo-400 p-3 sm:p-4 rounded-xl flex-1 text-2xl sm:text-3xl font-bold text-center focus:ring-4 focus:ring-indigo-300 focus:outline-none shadow-lg"
             placeholder="?"
             autoFocus
           />
           <button
             onClick={handleSubmit}
-            className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+            className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xl sm:text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all whitespace-nowrap"
           >
             ✓ Submit
           </button>

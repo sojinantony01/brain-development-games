@@ -139,20 +139,20 @@ export default function DualTask({ level }: DualTaskProps): JSX.Element {
         <div className="border-4 border-green-300 rounded-2xl p-6 bg-gradient-to-br from-green-50 to-teal-50 shadow-lg">
           <h3 className="text-2xl font-bold mb-3 text-green-700">➕ Task 2: Solve Math</h3>
           <div className="text-4xl font-mono font-bold mb-6 text-center text-green-600">{mathProblem.question} = ?</div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <input
               type="number"
               value={mathInput}
               onChange={(e) => setMathInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleMathSubmit()}
               disabled={!running}
-              className="border-4 border-green-300 p-3 rounded-xl flex-1 text-2xl font-bold text-center focus:border-green-500 focus:outline-none shadow-lg"
+              className="border-4 border-green-300 p-2 sm:p-3 rounded-xl flex-1 text-xl sm:text-2xl font-bold text-center focus:border-green-500 focus:outline-none shadow-lg"
               placeholder="Answer"
             />
             <button
               onClick={handleMathSubmit}
               disabled={!running}
-              className="px-6 py-3 bg-gradient-to-r from-green-500 to-teal-600 text-white text-2xl font-bold rounded-xl hover:from-green-600 hover:to-teal-700 disabled:opacity-50 shadow-lg transform hover:scale-105 transition-all"
+              className="px-5 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-teal-600 text-white text-xl sm:text-2xl font-bold rounded-xl hover:from-green-600 hover:to-teal-700 disabled:opacity-50 shadow-lg transform hover:scale-105 transition-all whitespace-nowrap"
             >
               ✓
             </button>

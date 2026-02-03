@@ -48,17 +48,23 @@ const QuickMath = ({ level }: QuickMathProps): JSX.Element => {
   }, [timeLeft])
 
   const submit = (): void => {
+    if (completed) return // Don't allow submissions after completion
+    
     const val = Number(input)
     const newScore = val === problem.answer ? score + 1 : Math.max(0, score - 1)
     if (val === problem.answer) setScore((s) => s + 1)
     else setScore((s) => Math.max(0, s - 1))
-    // progress rule
+    
+    // Check if target reached
     if (!saved.current && newScore >= target) {
       const percentageScore = Math.min(100, Math.round((newScore / target) * 100))
       markGameCompletedLevel('quick-math', level, percentageScore, 100)
       saved.current = true
       setCompleted(true)
+      return // Stop here, don't generate new problem
     }
+    
+    // Only generate new problem if not completed
     setProblem(generateProblem(level))
     setInput('')
     if (level >= 9) setTimeLeft(2000)
@@ -88,18 +94,20 @@ const QuickMath = ({ level }: QuickMathProps): JSX.Element => {
           </div>
         </div>
 
-        <div className="flex gap-4 items-center justify-center mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-center mb-6">
           <input
-            className="text-4xl font-bold text-center border-4 border-blue-400 p-4 rounded-xl w-48 focus:ring-4 focus:ring-blue-300 focus:outline-none shadow-lg"
+            className="text-2xl sm:text-4xl font-bold text-center border-4 border-blue-400 p-3 sm:p-4 rounded-xl w-full sm:w-48 focus:ring-4 focus:ring-blue-300 focus:outline-none shadow-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="?"
             autoFocus
+            disabled={completed}
           />
           <button
             onClick={submit}
-            className="px-8 py-4 bg-gradient-to-r from-green-400 to-green-500 text-white text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+            disabled={completed}
+            className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-green-400 to-green-500 text-white text-xl sm:text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             ✓ Submit
           </button>

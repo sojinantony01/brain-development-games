@@ -40,6 +40,7 @@ const MentalRotation = ({ level }: MentalRotationProps): JSX.Element => {
   const [attempts, setAttempts] = useState(0)
   const saved = useRef(false)
   const [completed, setCompleted] = useState(false)
+  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null)
   const target = Math.max(3, Math.ceil(level * 1.5))
 
   useEffect(() => {
@@ -48,19 +49,20 @@ const MentalRotation = ({ level }: MentalRotationProps): JSX.Element => {
     setScore(0)
     setAttempts(0)
     setCompleted(false)
+    setFeedback(null)
     saved.current = false
   }, [level])
-
-  const respawn = (): void => {
-    setPair(generatePair(level))
-  }
 
   const answer = (isSame: boolean): void => {
     if (completed) return // Don't allow answers after completion
     
+    const isCorrect = isSame === pair.same
     setAttempts((a) => a + 1)
-    const newScore = score + (isSame === pair.same ? 1 : 0)
-    if (isSame === pair.same) setScore((s) => s + 1)
+    const newScore = score + (isCorrect ? 1 : 0)
+    if (isCorrect) setScore((s) => s + 1)
+    
+    // Show brief feedback
+    setFeedback(isCorrect ? 'correct' : 'wrong')
     
     // Check if target reached
     if (newScore >= target) {
@@ -75,8 +77,11 @@ const MentalRotation = ({ level }: MentalRotationProps): JSX.Element => {
       return // Stop here, don't generate new pair
     }
     
-    // Only generate new pair if not completed
-    respawn()
+    // Immediately generate new pair and clear feedback
+    setTimeout(() => {
+      setPair(generatePair(level))
+      setFeedback(null)
+    }, 300) // Very brief feedback display
   }
 
   return (
@@ -100,12 +105,22 @@ const MentalRotation = ({ level }: MentalRotationProps): JSX.Element => {
           </div>
         </div>
 
-        <div className="flex gap-8 justify-center items-center my-8">
-          <div className="w-56 h-40 flex items-center justify-center border-4 border-teal-400 rounded-2xl bg-gradient-to-br from-white to-teal-50 text-6xl font-mono shadow-lg transform hover:scale-105 transition-all">
+        <div className="flex gap-8 justify-center items-center my-8 relative">
+          <div className={`w-56 h-40 flex items-center justify-center border-4 rounded-2xl text-6xl font-mono shadow-lg transform transition-all ${
+            feedback === 'correct' ? 'border-green-500 bg-gradient-to-br from-green-50 to-green-100 scale-105' :
+            feedback === 'wrong' ? 'border-red-500 bg-gradient-to-br from-red-50 to-red-100 scale-95' :
+            'border-teal-400 bg-gradient-to-br from-white to-teal-50 hover:scale-105'
+          }`}>
             {pair.left}
           </div>
-          <div className="text-5xl animate-pulse">🔄</div>
-          <div className="w-56 h-40 flex items-center justify-center border-4 border-cyan-400 rounded-2xl bg-gradient-to-br from-white to-cyan-50 text-6xl font-mono shadow-lg transform hover:scale-105 transition-all">
+          <div className="text-5xl animate-pulse">
+            {feedback === 'correct' ? '✅' : feedback === 'wrong' ? '❌' : '🔄'}
+          </div>
+          <div className={`w-56 h-40 flex items-center justify-center border-4 rounded-2xl text-6xl font-mono shadow-lg transform transition-all ${
+            feedback === 'correct' ? 'border-green-500 bg-gradient-to-br from-green-50 to-green-100 scale-105' :
+            feedback === 'wrong' ? 'border-red-500 bg-gradient-to-br from-red-50 to-red-100 scale-95' :
+            'border-cyan-400 bg-gradient-to-br from-white to-cyan-50 hover:scale-105'
+          }`}>
             {pair.right}
           </div>
         </div>

@@ -140,13 +140,13 @@ const ReactionTime = ({ level }: ReactionTimeProps): JSX.Element => {
           )}
         </div>
 
-        {phase === 'result' && (
+        {phase === 'result' && !completed && (
           <div className="flex justify-center mt-6">
             <button
               onClick={() => setPhase('ready')}
               className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
             >
-              🔄 Try Again
+              {attempts.length < target ? '🔄 Next Round' : '🔄 Try Again'}
             </button>
           </div>
         )}
@@ -164,13 +164,44 @@ const ReactionTime = ({ level }: ReactionTimeProps): JSX.Element => {
           </div>
         )}
 
-        {completed && (
-          <div className="mt-6 p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-4 border-emerald-300">
-            <div className="text-3xl font-bold text-center mb-2">🎉 Lightning Fast! Level {level} completed! 🎉</div>
-            <div className="text-xl text-center mb-4">Average: <span className="font-bold text-2xl">{avgTime?.toFixed(0)}ms</span></div>
-            <div className="flex justify-center">
-              <NextLevelButton currentLevel={level} />
-            </div>
+        {attempts.length >= target && (
+          <div className={`mt-6 p-6 rounded-xl shadow-lg border-4 ${
+            completed
+              ? 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 border-emerald-300'
+              : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border-blue-300'
+          }`}>
+            {completed ? (
+              <>
+                <div className="text-3xl font-bold text-center mb-2">🎉 Lightning Fast! Level {level} completed! 🎉</div>
+                <div className="text-xl text-center mb-4">Average: <span className="font-bold text-2xl">{avgTime?.toFixed(0)}ms</span></div>
+                <div className="flex justify-center">
+                  <NextLevelButton currentLevel={level} />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-2xl font-bold text-center mb-2">⚡ Round Complete!</div>
+                <div className="text-xl text-center mb-4">
+                  Average: <span className="font-bold text-2xl">{avgTime?.toFixed(0)}ms</span>
+                  {avgTime && avgTime > avgThreshold && (
+                    <div className="text-lg mt-2">
+                      🎯 Target: {'<'}{avgThreshold}ms - Keep practicing to unlock next level!
+                    </div>
+                  )}
+                </div>
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={() => {
+                      setAttempts([])
+                      setPhase('ready')
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+                  >
+                    🔄 Try Again
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

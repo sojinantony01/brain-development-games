@@ -80,9 +80,9 @@ const WordScramble = ({ level }: WordScrambleProps): JSX.Element => {
       <div className="text-6xl font-mono font-bold mb-8 text-center bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent tracking-widest animate-pulse">
         {scr.toUpperCase()}
       </div>
-      <div className="flex gap-4 items-center justify-center mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-center mb-6">
         <input
-          className="border-4 border-teal-300 p-4 rounded-xl text-2xl font-bold text-center flex-1 max-w-md focus:border-teal-500 focus:outline-none shadow-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="border-4 border-teal-300 p-3 sm:p-4 rounded-xl text-xl sm:text-2xl font-bold text-center flex-1 max-w-full sm:max-w-md focus:border-teal-500 focus:outline-none shadow-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && submitGuess()}
@@ -92,7 +92,7 @@ const WordScramble = ({ level }: WordScrambleProps): JSX.Element => {
         <button
           onClick={submitGuess}
           disabled={completed}
-          className="px-8 py-4 bg-gradient-to-r from-green-500 to-teal-600 text-white text-2xl font-bold rounded-xl hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-green-500 to-teal-600 text-white text-xl sm:text-2xl font-bold rounded-xl hover:from-green-600 hover:to-teal-700 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none whitespace-nowrap"
         >
           ✓ Submit
         </button>

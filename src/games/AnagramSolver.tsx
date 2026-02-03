@@ -106,20 +106,20 @@ const AnagramSolver = ({ level }: AnagramSolverProps): JSX.Element => {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
-          className="border-4 border-orange-300 p-4 rounded-xl text-2xl font-bold text-center flex-1 focus:border-orange-500 focus:outline-none shadow-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
+          className="border-4 border-orange-300 p-3 sm:p-4 rounded-xl text-xl sm:text-2xl font-bold text-center flex-1 focus:border-orange-500 focus:outline-none shadow-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
           placeholder="Type your answer..."
           disabled={timeLeft === 0 || completed}
         />
         <button
           onClick={handleSubmit}
           disabled={timeLeft === 0 || completed}
-          className="px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white text-2xl font-bold rounded-xl hover:from-orange-600 hover:to-amber-700 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white text-xl sm:text-2xl font-bold rounded-xl hover:from-orange-600 hover:to-amber-700 shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none whitespace-nowrap"
         >
           ✓ Submit
         </button>

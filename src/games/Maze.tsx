@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { markGameCompletedLevel } from '../lib/progress'
 import NextLevelButton from '../components/NextLevelButton'
 import CelebrationAnimation from '../components/CelebrationAnimation'
@@ -101,6 +101,7 @@ const Maze = ({ level }: MazeProps): JSX.Element => {
   const [won, setWon] = useState(false)
   const [fog, setFog] = useState(level >= 7)
   const [dynamic, setDynamic] = useState(level >= 9)
+  const saved = useRef(false)
   
   // Calculate star rating based on efficiency
   const getStars = (moves: number, optimal: number): number => {
@@ -119,6 +120,7 @@ const Maze = ({ level }: MazeProps): JSX.Element => {
     setFog(level >= 7)
     setDynamic(level >= 9)
     setResetCount(0)
+    saved.current = false
   }, [initialGrid, start, level])
 
   useEffect(() => {
@@ -153,7 +155,10 @@ const Maze = ({ level }: MazeProps): JSX.Element => {
       setWon(true)
       // Score based on efficiency: 100 points for optimal, decreasing with extra moves
       const efficiency = Math.max(0, Math.min(100, Math.round((optimalMoves / moves) * 100)))
-      markGameCompletedLevel('maze', level, efficiency, 100)
+      if (!saved.current) {
+        markGameCompletedLevel('maze', level, efficiency, 100)
+        saved.current = true
+      }
     }
   }
 

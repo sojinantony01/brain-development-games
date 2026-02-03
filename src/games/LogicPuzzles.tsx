@@ -304,9 +304,9 @@ const LogicPuzzles = ({ level }: LogicPuzzlesProps): JSX.Element => {
           </div>
         )}
 
-        <div className="flex gap-4 items-center justify-center mb-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-center mb-6">
           <input
-            className="text-4xl font-bold text-center border-4 border-purple-400 p-4 rounded-xl w-64 focus:ring-4 focus:ring-purple-300 focus:outline-none shadow-lg disabled:bg-gray-100"
+            className="text-2xl sm:text-4xl font-bold text-center border-4 border-purple-400 p-3 sm:p-4 rounded-xl w-full sm:w-64 focus:ring-4 focus:ring-purple-300 focus:outline-none shadow-lg disabled:bg-gray-100"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
@@ -318,7 +318,7 @@ const LogicPuzzles = ({ level }: LogicPuzzlesProps): JSX.Element => {
           <button
             onClick={submit}
             disabled={completed}
-            className="px-8 py-4 bg-gradient-to-r from-green-400 to-green-500 text-white text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-green-400 to-green-500 text-white text-xl sm:text-2xl font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none whitespace-nowrap"
           >
             ✓ Submit
           </button>

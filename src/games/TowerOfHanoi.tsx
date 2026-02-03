@@ -90,17 +90,16 @@ const TowerOfHanoi = ({ level }: TowerProps): JSX.Element => {
   useEffect(() => {
     // win condition: all disks on rod 2 (or any rod other than start for randomized)
     const target = level === 9 ? 0 : 2
-    if (rods[target].length === diskCount) {
+    if (rods[target].length === diskCount && !won) {
       setWon(true)
       // persist progress and add leaderboard entry (score = 100 - moves)
       import('../lib/progress').then(({ markGameCompletedLevel }) => {
         markGameCompletedLevel('tower-of-hanoi', level, Math.max(0, 100 - moves), 100)
       })
     }
-  }, [rods, diskCount, level])
+  }, [rods, diskCount, level, won])
 
   const renderDisk = (d: number): JSX.Element => {
-    const width = 40 + d * 15
     const diskColors = [
       'bg-gradient-to-r from-red-400 to-red-500',
       'bg-gradient-to-r from-orange-400 to-orange-500',
@@ -113,13 +112,15 @@ const TowerOfHanoi = ({ level }: TowerProps): JSX.Element => {
       'bg-gradient-to-r from-cyan-400 to-cyan-500',
       'bg-gradient-to-r from-teal-400 to-teal-500',
     ]
+    // Responsive width: percentage-based for mobile, fixed for larger screens
+    const widthPercent = 40 + d * 8 // percentage for mobile
     return (
       <div
         key={d}
-        className={`mx-auto my-1 ${diskColors[(d - 1) % diskColors.length]} text-white text-center rounded-full font-bold shadow-lg border-2 border-white transform hover:scale-105 transition-all`}
-        style={{ width: `${width}px`, height: '28px', lineHeight: '28px' }}
+        className={`mx-auto my-0.5 sm:my-1 ${diskColors[(d - 1) % diskColors.length]} text-white text-center rounded-full font-bold shadow-lg border-2 border-white transform hover:scale-105 transition-all text-xs sm:text-sm`}
+        style={{ width: `${widthPercent}%`, height: '20px', lineHeight: '20px' }}
       >
-        {!hidden ? `🎯 ${d}` : '❓'}
+        {!hidden ? `${d}` : '❓'}
       </div>
     )
   }
@@ -127,33 +128,33 @@ const TowerOfHanoi = ({ level }: TowerProps): JSX.Element => {
   return (
     <>
       <CelebrationAnimation show={won} />
-      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-8 rounded-2xl shadow-xl">
-        <div className="text-center mb-6">
-          <h2 className="text-4xl font-bold text-orange-700 flex items-center justify-center gap-3">
-            🗼 Tower of Hanoi
-            <span className="text-2xl bg-orange-100 px-4 py-1 rounded-full">Level {level}</span>
+      <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4 sm:p-8 rounded-2xl shadow-xl">
+        <div className="text-center mb-4 sm:mb-6">
+          <h2 className="text-2xl sm:text-4xl font-bold text-orange-700 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
+            <span>🗼 Tower of Hanoi</span>
+            <span className="text-lg sm:text-2xl bg-orange-100 px-3 sm:px-4 py-1 rounded-full">Level {level}</span>
           </h2>
-          <div className="flex gap-6 justify-center mt-4 text-lg font-bold">
-            <div className="bg-white px-6 py-3 rounded-xl shadow-md">
-              <span className="text-blue-600">🎯 Disks:</span> <span className="text-2xl text-blue-700">{diskCount}</span>
+          <div className="flex flex-wrap gap-3 sm:gap-6 justify-center mt-3 sm:mt-4 text-sm sm:text-lg font-bold">
+            <div className="bg-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl shadow-md">
+              <span className="text-blue-600">🎯 Disks:</span> <span className="text-xl sm:text-2xl text-blue-700">{diskCount}</span>
             </div>
-            <div className="bg-white px-6 py-3 rounded-xl shadow-md">
-              <span className="text-green-600">🎮 Moves:</span> <span className="text-2xl text-green-700">{moves}</span>
+            <div className="bg-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl shadow-md">
+              <span className="text-green-600">🎮 Moves:</span> <span className="text-xl sm:text-2xl text-green-700">{moves}</span>
             </div>
           </div>
         </div>
 
         {level === 10 && (
-          <div className="mb-4 p-4 bg-yellow-100 border-2 border-yellow-400 rounded-xl text-center">
-            <p className="text-lg font-bold text-yellow-800">⚠️ Blind Mode: Disks hide after 2 seconds! 👀</p>
+          <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-yellow-100 border-2 border-yellow-400 rounded-xl text-center">
+            <p className="text-sm sm:text-lg font-bold text-yellow-800">⚠️ Blind Mode: Disks hide after 2 seconds! 👀</p>
           </div>
         )}
 
-        <div className="flex gap-8 justify-center my-8">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center my-4 sm:my-8">
           {rods.map((r, idx) => (
-            <div key={idx} className="flex-1 max-w-xs">
-              <div className="mb-4 text-center">
-                <span className="text-2xl font-bold text-orange-700 bg-orange-100 px-4 py-2 rounded-full">
+            <div key={idx} className="flex-1 max-w-full sm:max-w-xs">
+              <div className="mb-2 sm:mb-4 text-center">
+                <span className="text-base sm:text-2xl font-bold text-orange-700 bg-orange-100 px-3 sm:px-4 py-1 sm:py-2 rounded-full">
                   🏛️ Tower {idx + 1}
                 </span>
               </div>
@@ -161,14 +162,14 @@ const TowerOfHanoi = ({ level }: TowerProps): JSX.Element => {
                 onClick={() => handleRodClick(idx)}
                 role="button"
                 tabIndex={0}
-                className={`min-h-[240px] bg-gradient-to-b from-amber-100 to-amber-200 border-4 ${
+                className={`min-h-[180px] sm:min-h-[240px] bg-gradient-to-b from-amber-100 to-amber-200 border-4 ${
                   selectedFrom === idx ? 'border-orange-500 ring-4 ring-orange-300' : 'border-amber-400'
-                } rounded-2xl p-6 flex flex-col justify-end items-center cursor-pointer hover:shadow-xl transition-all relative`}
+                } rounded-2xl p-3 sm:p-6 flex flex-col justify-end items-center cursor-pointer hover:shadow-xl transition-all relative`}
               >
                 {/* Tower pole */}
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-3 h-full bg-gradient-to-b from-amber-600 to-amber-800 rounded-t-full"></div>
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-2 sm:w-3 h-full bg-gradient-to-b from-amber-600 to-amber-800 rounded-t-full"></div>
                 {/* Base */}
-                <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-r from-amber-700 to-amber-900 rounded-b-xl"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-3 sm:h-4 bg-gradient-to-r from-amber-700 to-amber-900 rounded-b-xl"></div>
                 {/* Disks */}
                 <div className="relative z-10 w-full">
                   {r.map((d) => renderDisk(d))}
@@ -178,18 +179,18 @@ const TowerOfHanoi = ({ level }: TowerProps): JSX.Element => {
           ))}
         </div>
 
-        <div className="mt-6">
+        <div className="mt-4 sm:mt-6">
           {won ? (
-            <div className="p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-4 border-emerald-300">
-              <div className="text-3xl font-bold text-center mb-2">🎉 Puzzle Solved! 🎉</div>
-              <div className="text-xl text-center mb-4">Completed in <span className="font-bold text-2xl">{moves}</span> moves!</div>
+            <div className="p-4 sm:p-6 bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 rounded-xl shadow-lg border-4 border-emerald-300">
+              <div className="text-2xl sm:text-3xl font-bold text-center mb-2">🎉 Puzzle Solved! 🎉</div>
+              <div className="text-lg sm:text-xl text-center mb-4">Completed in <span className="font-bold text-xl sm:text-2xl">{moves}</span> moves!</div>
               <div className="flex justify-center">
                 <NextLevelButton currentLevel={level} />
               </div>
             </div>
           ) : (
-            <div className="bg-blue-100 p-4 rounded-xl text-center">
-              <p className="text-lg text-blue-800 font-semibold">
+            <div className="bg-blue-100 p-3 sm:p-4 rounded-xl text-center">
+              <p className="text-sm sm:text-lg text-blue-800 font-semibold">
                 💡 Click a tower to select the top disk, then click another tower to move it!
               </p>
             </div>
